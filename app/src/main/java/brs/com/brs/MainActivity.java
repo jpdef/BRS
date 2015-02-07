@@ -49,4 +49,12 @@ public class MainActivity extends ActionBarActivity {
         startActivity(intent);
 
     }
+    public void start(View view){
+        Intent intent = new Intent(this,StartDetect.class);
+        startActivity(intent);
+    }
+    public void settings(View view){
+        Intent intent = new Intent(this,Settings.class);
+        startActivity(intent);
+    }
 }
