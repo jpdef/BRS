@@ -7,6 +7,7 @@ const int echoPin_1 = 4;
 const int echoPin_2 = 8; 
 const int packet_size = 16;
 const byte err_packet[] = {0xEF};
+bool  stp_strt = true;
 int startByte =0;
 
 byte* packet;
@@ -82,6 +83,7 @@ void serialEvent(){
    int sig_byte = Serial.read();
    long buff[6] = {0,0,0,0,0,0};
    if(sig_byte == 0xFF){
+      stp_strt = true;
       int i = 0;
       while(!q.isEmpty() && i < 5){
             buff[i] = q.pop();  
@@ -90,15 +92,21 @@ void serialEvent(){
        send_packet(buff[0],buff[1],1);
     }else{
        Serial.write(0xEE);
+       stp_strt = false;
+       while(! q.isEmpty() ){
+             q.pop();
+       }
     }
 
 }
 
 void loop()
 {
+ if(stp_strt){
    q.push(get_distance(trigPin_1,echoPin_1));
    q.push(get_distance(trigPin_2,echoPin_2)); 
-   delay(500);
+   delay(50);
+ }
 }    
      
      
