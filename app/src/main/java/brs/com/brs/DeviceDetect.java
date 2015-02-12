@@ -16,6 +16,7 @@ import android.widget.TextView;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
+import java.io.InterruptedIOException;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
@@ -42,9 +43,16 @@ public class DeviceDetect extends Activity {
     private final byte sig_start = (byte) 0xFF;
     private final byte sig_error = (byte) 0xEF;
     private final byte sig_kill  = (byte) 0xEE;
+    private final IOException no_write;
+    private final IOException no_read;
+
+    {
+        no_write = new IOException("nw");
+        no_read = new IOException("nr");
+    }
 
 
-/*-----------MAIN  FN'S--------------*/
+    /*-----------MAIN  FN'S--------------*/
     /*
       getPorts()
             -gets manager for driver
@@ -94,15 +102,14 @@ public class DeviceDetect extends Activity {
 *       Errors
 *             -IO exeception
  */
-    protected void writePort(byte sig){
+    protected void writePort(byte sig) throws IOException{
         byte[] sig_out = new byte[1];
         sig_out[0] = sig;
         try{
             mPort.write(sig_out,200);
         }catch (IOException e4){
             failure_message("Couldn't write");
-
-            return;
+            throw no_write;
         }
 
     }
@@ -119,7 +126,7 @@ public class DeviceDetect extends Activity {
 *      Errors:
 *              -IO exception
 */
-    protected byte[] readPort(){
+    protected byte[] readPort() throws IOException{
         byte buffer_in[] = new byte[32];
         try {
             int numBytesRead = mPort.read(buffer_in, 200);
@@ -134,6 +141,8 @@ public class DeviceDetect extends Activity {
                 } catch (IOException e7) {
                     //ignore
                 }
+                throw no_read;
+
         }
          return buffer_in;
     }
@@ -182,35 +191,38 @@ public class DeviceDetect extends Activity {
         public void handleMessage(Message msg){
             // on a message of sig kill send to arduino
             // and stop running read write
-            if(msg.what == sig_kill){
-                   writePort(sig_kill);
-            }
+             try {
+                  writePort((byte)msg.arg1);
+             }catch(IOException no_write){
+                    //do nothing
+             }
             readHandle.removeCallbacks(readRun);
 
             }
 
     };
 
-    final Runnable readRun = new Runnable(){
+    final Runnable readRun = new Runnable() {
         @Override
-        public void run(){
-            writePort(sig_start);
-            infoView.append(decode(readPort()));
-            //Should auto scroll
-            int scrollAmount = infoView.getLayout().getLineTop(infoView.getLineCount()) - infoView.getHeight();
-            if(scrollAmount > 0 ) {
-                infoView.scrollTo(0, scrollAmount);
-            }else{
-                infoView.scrollTo(0,0);
-            }
-            readHandle.postDelayed(this,0);                     // calls same thread in .2 secs
+        public void run() {
+            try {
+                writePort(sig_start);
+                infoView.append(decode(readPort()));
+                //Should auto scroll
+                int scrollAmount = infoView.getLayout().getLineTop(infoView.getLineCount()) - infoView.getHeight();
+                if (scrollAmount > 0) {
+                    infoView.scrollTo(0, scrollAmount);
+                } else {
+                    infoView.scrollTo(0, 0);
+                }
 
+                readHandle.postDelayed(this, 0);                     // calls same thread in .2 secs
+            }catch(IOException e){
+                failure_message(e.getMessage());
+            }
         }
 
-
     };
-
-
 
 
 
@@ -284,19 +296,28 @@ public class DeviceDetect extends Activity {
     protected void onPause() {
         super.onPause();
         // Another activity is taking focus (this activity is about to be "paused").
-        readHandle.removeCallbacks(readRun);
+        Message msg = readHandle.obtainMessage();
+        msg.arg1 = sig_kill;
+        readHandle.handleMessage(msg);
+
     }
     @Override
     protected void onStop() {
         super.onStop();
         // The activity is no longer visible (it is now "stopped")
-        readHandle.removeCallbacks(readRun);
+        //readHandle.handleMessage(sig_kill);
+        //readHandle.removeCallbacks(readRun);
+        Message msg = readHandle.obtainMessage();
+        msg.arg1 = sig_kill;
+        readHandle.handleMessage(msg);
 
     }
     @Override
     protected void onDestroy() {
         super.onDestroy();
-         readHandle.removeCallbacks(readRun);
+        Message msg = readHandle.obtainMessage();
+        msg.arg1 = sig_kill;
+        readHandle.handleMessage(msg);
 
         // The activity is about to be destroyed.
     }
