@@ -4,7 +4,8 @@ android:layout_height="match_parent" android:paddingLeft="@dimen/activity_horizo
 android:paddingRight="@dimen/activity_horizontal_margin"
 android:paddingTop="@dimen/activity_vertical_margin"
     android:orientation="vertical"
-android:paddingBottom="@dimen/activity_vertical_margin" tools:context=".MainActivity">
+android:paddingBottom="@dimen/activity_vertical_margin" tools:context=".MainActivity"
+    android:background="@drawable/gradient_blue">
 
     <LinearLayout
         android:layout_width="fill_parent"
@@ -14,28 +15,15 @@ android:paddingBottom="@dimen/activity_vertical_margin" tools:context=".MainActi
             android:layout_width="0dp"
             android:layout_weight="1"
             android:layout_height="20dp"
-            />
-            <Button
+            tools:ignore="NewApi" />
+            <ImageButton
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:id="@+id/settings"
-                android:text="Settings"
                 android:onClick="settings"
-                android:background="@drawable/menu_button_selector"/>
+                android:background="@drawable/button_settings_selector"/>
         </LinearLayout>
-<TextView android:text="@string/test_2" android:layout_width="wrap_content"
-    android:layout_height="wrap_content"
-    android:id="@+id/textView"
-    android:layout_below="@+id/textView2"
-    android:layout_alignParentLeft="true"
-    android:layout_alignParentStart="true"
-    android:layout_marginTop="51dp" />
-<TextView android:text="@string/test_1" android:layout_width="wrap_content"
-    android:layout_height="wrap_content"
-    android:id="@+id/textView2"
-    android:layout_marginTop="31dp"
-    android:layout_alignParentLeft="true"
-    android:layout_alignParentStart="true" />
+
 
     <Button
         style="?android:attr/buttonStyleSmall"
@@ -46,19 +34,17 @@ android:paddingBottom="@dimen/activity_vertical_margin" tools:context=".MainActi
         android:onClick="searchDevice"
         android:layout_gravity="center"
         android:layout_centerVertical="true"
-        android:layout_centerHorizontal="true"
-        android:background="@drawable/menu_button_selector"/>
+        android:layout_centerHorizontal="true"/>
     <Button
         style="?android:attr/buttonStyleSmall"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Start"
         android:id="@+id/start"
         android:onClick="start"
         android:layout_gravity="center"
         android:layout_centerVertical="true"
         android:layout_centerHorizontal="true"
-        android:background="@drawable/menu_button_selector"/>
+        android:background="@drawable/button_start_selector"/>
 
 
 </LinearLayout>
