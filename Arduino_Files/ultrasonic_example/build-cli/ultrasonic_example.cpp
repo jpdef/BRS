@@ -59,6 +59,7 @@ void loop()
   inches_2 = microsecondsToInches(duration_2);
 
 
+<<<<<<< .merge_file_bxHh7b
   delayMicroseconds(10);
   Serial.print(inches_1);
   Serial.print(" sensor 1 (in),  ");
@@ -67,6 +68,17 @@ void loop()
   Serial.println();
   
   delay(100);
+=======
+delayMicroseconds(10);
+int incomingBytes =0;
+if(Serial.available() || incomingBytes==0xFF){
+    incomingBytes = Serial.read();
+}
+
+ Serial.println(inches_1);
+ Serial.println(inches_2);
+ delay(100);
+>>>>>>> .merge_file_i1pzC9
 }
  
  

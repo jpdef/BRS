@@ -58,6 +58,7 @@ void loop()
   inches_2 = microsecondsToInches(duration_2);
 
 
+<<<<<<< .merge_file_5bUiGg
   delayMicroseconds(10);
   Serial.print(inches_1);
   Serial.print(" sensor 1 (in),  ");
@@ -66,12 +67,19 @@ void loop()
   Serial.println();
   
   delay(100);
+=======
+delayMicroseconds(10);
+int incomingBytes =0;
+if(Serial.available() || incomingBytes==0xFF){
+    incomingBytes = Serial.read();
+>>>>>>> .merge_file_sf8d0h
 }
 //Note:
 // We want to interupt on RISING for 0 or 1 
 // attachInterupt(0,some_fn,RISING);
 //
 
+<<<<<<< .merge_file_5bUiGg
 void long_to_byte(long num, byte_array){
      //byte array contains lowest bytes at 0
      //shift bits and add to retain original long
@@ -80,6 +88,13 @@ void long_to_byte(long num, byte_array){
      byte_array[2] = (num & 0x00FF0000UL) >>16;
      byte_array[3] = (num & 0xFF000000UL) >>24;
 } 
+=======
+ Serial.println(inches_1);
+ Serial.println(inches_2);
+ delay(100);
+}
+ 
+>>>>>>> .merge_file_sf8d0h
  
 long microsecondsToCentimeters(long microseconds)
 {
