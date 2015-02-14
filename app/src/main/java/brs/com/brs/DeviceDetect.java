@@ -192,7 +192,9 @@ public class DeviceDetect extends Activity {
             // on a message of sig kill send to arduino
             // and stop running read write
              try {
-                  writePort((byte)msg.arg1);
+                 if(mPort != null) {
+                     writePort((byte) msg.arg1);
+                 }
              }catch(IOException no_write){
                     //do nothing
              }
@@ -209,13 +211,14 @@ public class DeviceDetect extends Activity {
                 writePort(sig_start);
                 infoView.append(decode(readPort()));
                 //Should auto scroll
+               /*
                 int scrollAmount = infoView.getLayout().getLineTop(infoView.getLineCount()) - infoView.getHeight();
                 if (scrollAmount > 0) {
                     infoView.scrollTo(0, scrollAmount);
                 } else {
                     infoView.scrollTo(0, 0);
                 }
-
+*/
                 readHandle.postDelayed(this, 0);                     // calls same thread in .2 secs
             }catch(IOException e){
                 failure_message(e.getMessage());
@@ -307,6 +310,7 @@ public class DeviceDetect extends Activity {
         // The activity is no longer visible (it is now "stopped")
         //readHandle.handleMessage(sig_kill);
         //readHandle.removeCallbacks(readRun);
+
         Message msg = readHandle.obtainMessage();
         msg.arg1 = sig_kill;
         readHandle.handleMessage(msg);
