@@ -16,6 +16,7 @@ import android.graphics.Paint;
 import android.graphics.drawable.BitmapDrawable;
 import android.os.Bundle;
 import android.view.Menu;
+import android.widget.Button;
 import android.widget.LinearLayout;
 
 /**
@@ -31,12 +32,13 @@ public class StartDetect extends Activity {
         setContentView(R.layout.start_detect);
         Paint paint = new Paint();
         paint.setColor(Color.parseColor("#ffffff"));
+        paint.setStrokeWidth(3);
         Bitmap bg = Bitmap.createBitmap(480,800,Bitmap.Config.ARGB_8888);
         Canvas canvas = new Canvas(bg);
         int maxH = canvas.getHeight();
         int maxW = canvas.getWidth();
         canvas.drawLines(makeArc(canvas,2),paint);
-        canvas.drawLines(makeArc(canvas,3),paint);
+        canvas.drawLines(makeArc(canvas, 3), paint);
         canvas.drawLines(makeArc(canvas,4),paint);
         makeSectors(canvas,paint);
         //float st = 0; float swp = 180;
@@ -63,17 +65,20 @@ public class StartDetect extends Activity {
     }
 
     public void makeSectors(Canvas canvas,Paint paint){
+        paint.setTextSize(20);
+        paint.setTextAlign(Paint.Align.CENTER);
         int maxW = canvas.getWidth();
         int maxH = canvas.getHeight();
         float thirty = (float)Math.PI/6;
         float angle = 0;
-        for(int i = 0; i <6 ; ++i){
+        for(int i = 0; i <7 ; ++i){
             float endX =  (maxW/2)*(FloatMath.cos(angle)+1);
-            float endY =  (maxH/2)* FloatMath.sin(angle
-            );
+            float endY =  (maxH/2)* FloatMath.sin(angle);
+            canvas.drawText(String.format("%d",(int)(180*(angle/Math.PI))),
+                    endX, (float)(1.2*endY),paint);
             Log.v(gtag, endX + " " + endY);
             angle += thirty;
-            canvas.drawLine(maxW/2,0,endX,endY,paint);
+            canvas.drawLine(maxW/2,0,endX, endY,paint);
         }
 
     }

@@ -11,17 +11,15 @@
         android:layout_height="193dp"
         android:id="@+id/mainSurfView"
         android:background="@color/primary_material_dark"
-        android:layout_weight="1" />
+        android:layout_weight="0.99" />
 
-    <Button
-        android:layout_width="386dp"
-        android:layout_height="wrap_content"
+    <ImageButton
+        android:layout_width="400dp"
+        android:layout_height="50dp"
+        android:background="#ffff231d"
         android:onClick="GoBack"
-        android:layout_gravity="right"
         android:id="@+id/stop"
-        android:background="#ffb23842"
-        android:textAlignment="center"
-        style="@style/Base.TextAppearance.AppCompat" />
+        android:focusable="false" />
 </LinearLayout>
 
 
