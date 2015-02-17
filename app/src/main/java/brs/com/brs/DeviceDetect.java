@@ -1,6 +1,7 @@
 package brs.com.brs;
 import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
 import android.hardware.usb.UsbAccessory;
 import android.hardware.usb.UsbDeviceConnection;
 import android.hardware.usb.UsbManager;
@@ -277,6 +278,10 @@ public class DeviceDetect extends Activity {
     @Override
     protected void onResume() {
         super.onResume();
+        //pass to next activity
+        //parcelable for mport
+        Intent i = new Intent(this,StartDetect.class);
+
 
         //If no port connect to port
         if (mPort == null) {
@@ -339,6 +344,7 @@ public class DeviceDetect extends Activity {
         successView.append("Sucess" + warn);
         successView.setTextSize(40);
     }
+
 
 
 
