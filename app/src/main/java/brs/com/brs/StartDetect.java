@@ -21,6 +21,9 @@ import android.view.Menu;
 import android.widget.Button;
 import android.widget.LinearLayout;
 
+import java.io.IOError;
+import java.io.IOException;
+
 /**
  * Created by lesterpi on 2/1/15.
  */
@@ -28,15 +31,24 @@ import android.widget.LinearLayout;
 public class StartDetect extends Activity {
     Radial radial;
     String gtag = new String("graphics:");
+    Sensor sensor;
+    float[] sensor_data;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        Sensor sensor = new Sensor(DeviceDetect.getport();
+        Sensor sensor = new Sensor(DeviceDetect.getPort());
         Radial radial = new Radial(this,sensor);
         setContentView(radial);
 
 
     }
+    @Override
+    protected void onPause() {
+        super.onStop();
+        sensor.stopArdiuno();
+    }
+
+
     @Override
     protected void onStop() {
         super.onStop();
@@ -56,7 +68,7 @@ public class StartDetect extends Activity {
     Bitmap bgr;
     Paint paint;
     int maxH; int maxW;
-    Sensor senssor;
+    Sensor sensor;
 
 
 
@@ -86,6 +98,7 @@ public class StartDetect extends Activity {
         /*Get normalized data
           from sensor
           getData()*/
+
         canvas.drawLines(makeArc(canvas,2),paint);
         canvas.drawLines(makeArc(canvas,3), paint);
         canvas.drawLines(makeArc(canvas,4),paint);
@@ -105,7 +118,7 @@ public class StartDetect extends Activity {
 
     @Override
     public void surfaceDestroyed(SurfaceHolder holder) {
-        Log.v(gtag,"DESTROY");
+        Log.v(gtag, "DESTROY");
 
         thread.setRunning(false);
         boolean retry = true;
@@ -125,7 +138,7 @@ public class StartDetect extends Activity {
     class radialThread extends Thread{
         private SurfaceHolder surfaceHolder; //underlying canvas for next frame
         private Radial mainView;
-        private boolean run = false;
+        private volatile boolean run = false;
 
         //constructor
         public radialThread(SurfaceHolder surfaceHolder, Radial mainView){
@@ -152,6 +165,12 @@ public class StartDetect extends Activity {
                 }catch (InterruptedException e){
 
                 }
+                try{
+                   sensor_data = sensor.getData();
+                }catch (Exception nrw){
+                    surfaceDestroyed(surfaceHolder);
+                    //setRunning(false);
+                }
 
                 try {
                     c = surfaceHolder.lockCanvas(null);
@@ -160,8 +179,8 @@ public class StartDetect extends Activity {
                           mainView.onDraw(c);
                       }
                     }
-                }finally{
-                    if(c!=null){
+                }finally {
+                    if (c != null) {
                         surfaceHolder.unlockCanvasAndPost(c);
                     }
                 }

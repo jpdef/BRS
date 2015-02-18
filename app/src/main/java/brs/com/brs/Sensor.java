@@ -14,8 +14,38 @@ public class Sensor {
     IOException no_write;
     IOException no_read ;
 
+    /*Byte signals*/
+    public final byte sig_start = (byte) 0xFF;
+    public final byte sig_error = (byte) 0xEF;
+    public final byte sig_kill  = (byte) 0xEE;
+
     public Sensor(UsbSerialPort port){
-        this.port =port;
+       this.port =port;
+    }
+
+    /* getData()
+    *
+    * */
+    public float[] getData() throws Exception{
+        try {
+            writePort(sig_start);
+            try {
+                 return decode(readPort());
+            }catch (Exception nr){
+                throw no_read;
+            }
+        }catch (Exception nw){
+            throw no_write;
+        }
+
+   }
+
+    public void stopArdiuno(){
+        try{
+            writePort(sig_kill);
+        }catch (Exception e){
+            // do somethign
+        }
     }
 
 
@@ -44,7 +74,7 @@ public class Sensor {
 *      Returns: String (for now)
 *      Protocol:
 *              -Buffers 32 bytes
-*              -Reads for 0.2 secs
+*              -Reads for readtime secs
 *              -Return HEX string
 *      Errors:
 *              -IO exception no_read
@@ -70,29 +100,24 @@ public class Sensor {
     }
 
 
-    protected String decode(byte[] buffer_in ){
-        String output ="";
+    protected float[] decode(byte[] buffer_in ){
+        float output[] = new float[6];
         Integer i =0;
         for( ;i<buffer_in.length ; ++i){
-            if(buffer_in[i] == DeviceDetect.s){
+            if(buffer_in[i] == sig_start){
                 break; // find start signal
             }
         }
         ++i;
         int j = 0;
-        while( j < 2 && i < buffer_in.length && buffer_in[i] != sig_kill) {
-            long lo = (long)(buffer_in[i]);
-            long hi = (long) (buffer_in[i+1] );
-            hi = hi << 4;
-            long temp = lo +hi;
-            output = HexDump.toHexString(buffer_in[i]) + HexDump.toHexString(buffer_in[i+1]) + " = ";
-
-            output =  output + " " + temp + "  ";
+        while( j < 6 && i < buffer_in.length && buffer_in[i] != sig_kill) {
+            output[j] = (float)(buffer_in[i]);
+            output[j] /=(float)255;           //scale
             i+=2;
             ++j;
         }
 
-        return output + "\n";
+        return output;
 
     }
 

@@ -1,6 +1,7 @@
 package brs.com.brs;
 
 import android.app.Activity;
+import android.bluetooth.BluetoothClass;
 import android.content.Context;
 import android.hardware.usb.UsbManager;
 import android.support.v7.app.ActionBarActivity;
@@ -9,7 +10,8 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.content.Intent;
-
+import android.hardware.usb.UsbDeviceConnection;
+import android.hardware.usb.UsbManager;
 
 
 public class MainActivity extends Activity {
@@ -18,6 +20,15 @@ public class MainActivity extends Activity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        //Connection portion
+        UsbManager usbManager = (UsbManager) getSystemService(Context.USB_SERVICE);
+        DeviceDetect.intializeSerial(usbManager);
+        DeviceDetect.setPort();
+        try{
+            DeviceDetect.connectToDevice();
+        }catch(Exception e){
+            //do something if no_connect
+        }
 
 
     }
