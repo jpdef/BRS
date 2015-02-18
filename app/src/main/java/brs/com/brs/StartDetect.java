@@ -31,7 +31,8 @@ public class StartDetect extends Activity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        Radial radial = new Radial(this);
+        Sensor sensor = new Sensor(DeviceDetect.getport();
+        Radial radial = new Radial(this,sensor);
         setContentView(radial);
 
 
@@ -45,7 +46,6 @@ public class StartDetect extends Activity {
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        radial.thread.stop();
 
 
     }
@@ -56,10 +56,11 @@ public class StartDetect extends Activity {
     Bitmap bgr;
     Paint paint;
     int maxH; int maxW;
+    Sensor senssor;
 
 
 
-    public Radial(Context context){
+    public Radial(Context context,Sensor sensor){
         super(context);
         //Initalize bitmap parameters
         bgr = Bitmap.createBitmap(480,800,Bitmap.Config.ARGB_8888);
@@ -68,6 +69,7 @@ public class StartDetect extends Activity {
         paint = new Paint();
         paint.setColor(Color.parseColor("#ffffff"));
         paint.setStrokeWidth(3);
+        this.sensor = sensor;
 
 
         //Set canvas thread
@@ -81,6 +83,9 @@ public class StartDetect extends Activity {
         float t2 = (float)maxW;
         canvas.drawBitmap(bgr,t2,t1,paint);
         Log.v(gtag,"ondraw accessed");
+        /*Get normalized data
+          from sensor
+          getData()*/
         canvas.drawLines(makeArc(canvas,2),paint);
         canvas.drawLines(makeArc(canvas,3), paint);
         canvas.drawLines(makeArc(canvas,4),paint);

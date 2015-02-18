@@ -70,5 +70,31 @@ public class Sensor {
     }
 
 
+    protected String decode(byte[] buffer_in ){
+        String output ="";
+        Integer i =0;
+        for( ;i<buffer_in.length ; ++i){
+            if(buffer_in[i] == DeviceDetect.s){
+                break; // find start signal
+            }
+        }
+        ++i;
+        int j = 0;
+        while( j < 2 && i < buffer_in.length && buffer_in[i] != sig_kill) {
+            long lo = (long)(buffer_in[i]);
+            long hi = (long) (buffer_in[i+1] );
+            hi = hi << 4;
+            long temp = lo +hi;
+            output = HexDump.toHexString(buffer_in[i]) + HexDump.toHexString(buffer_in[i+1]) + " = ";
+
+            output =  output + " " + temp + "  ";
+            i+=2;
+            ++j;
+        }
+
+        return output + "\n";
+
+    }
+
 
 }

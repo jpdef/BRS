@@ -41,9 +41,9 @@ public class DeviceDetect extends Activity {
     private int packetSize =10;
 
 /*Byte signals*/
-    private final byte sig_start = (byte) 0xFF;
-    private final byte sig_error = (byte) 0xEF;
-    private final byte sig_kill  = (byte) 0xEE;
+    public final byte sig_start = (byte) 0xFF;
+    public final byte sig_error = (byte) 0xEF;
+    public final byte sig_kill  = (byte) 0xEE;
     private final IOException no_write;
     private final IOException no_read;
 
