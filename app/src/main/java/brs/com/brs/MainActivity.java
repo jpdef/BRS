@@ -12,6 +12,7 @@ import android.view.View;
 import android.content.Intent;
 import android.hardware.usb.UsbDeviceConnection;
 import android.hardware.usb.UsbManager;
+import android.widget.TextView;
 
 
 public class MainActivity extends Activity {
@@ -20,15 +21,14 @@ public class MainActivity extends Activity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        //Connection portion
-        UsbManager usbManager = (UsbManager) getSystemService(Context.USB_SERVICE);
-        DeviceDetect.intializeSerial(usbManager);
-        DeviceDetect.setPort();
+        DeviceDetect.intializeSerial(this);
         try{
             DeviceDetect.connectToDevice();
         }catch(Exception e){
-            //do something if no_connect
+            TextView connectView = (TextView) findViewById(R.id.connectView);
+            connectView.append("Not Connected");
         }
+
 
 
     }
@@ -56,14 +56,20 @@ public class MainActivity extends Activity {
         return super.onOptionsItemSelected(item);
     }
 */
-    public void searchDevice(View view){
-        Intent intent = new Intent(this,DeviceDetect.class);
-        startActivity(intent);
+    public void connectDevice(View view){
+
+        try{
+            DeviceDetect.connectToDevice();
+        }catch(Exception e){
+            TextView connectView = (TextView) findViewById(R.id.connectView);
+            connectView.append("Not Connected");
+        }
 
     }
     public void start(View view){
-        Intent intent = new Intent(this,StartDetect.class);
-        startActivity(intent);
+            Intent intent = new Intent(this, StartDetect.class);
+            startActivity(intent);
+
     }
     public void settings(View view){
         Intent intent = new Intent(this,Settings.class);

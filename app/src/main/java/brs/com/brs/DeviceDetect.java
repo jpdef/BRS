@@ -43,12 +43,13 @@ public class DeviceDetect{
 
     /*-----------MAIN  FN'S--------------*/
 
-    static public void intializeSerial(UsbManager usbManager){
-         mUsbManager = usbManager;
+    static public void intializeSerial(Context context)
+    {
+         mUsbManager = (UsbManager) context.getSystemService(Context.USB_SERVICE);
     }
 
     public static boolean isConnected(){
-        if (mUsbManager.getDeviceList().isEmpty() || mPort == null) {
+        if (mUsbManager.getDeviceList().isEmpty() ||mConnection.getFileDescriptor()<0) {
             return false;
         }
         return true;
@@ -59,27 +60,6 @@ public class DeviceDetect{
     }
 
 
-    /*
-      getPorts()
-            -gets manager for driver
-            -driver gets list of ports
-    */
-    public static boolean setPort(){
-        //must be passed in
-        //mUsbManager = (UsbManager) getSystemService(Context.USB_SERVICE);
-        List<UsbSerialDriver> mDrivers = UsbSerialProber.getDefaultProber().findAllDrivers(mUsbManager);
-        List<UsbSerialPort> ports = null;
-
-        if(mDrivers.isEmpty()){
-            return false;
-        }else{
-            ports = mDrivers.get(0).getPorts();
-            mPort = ports.get(0);
-            return true;
-        }
-
-    }
-
 
     /*
     *  connectToDevice()
@@ -87,12 +67,19 @@ public class DeviceDetect{
     *        -throws no-connect
     */
     public static void connectToDevice() throws Exception{
-        UsbDeviceConnection mConnection = mUsbManager.openDevice(mPort.getDriver().getDevice());
-        try{
+        List<UsbSerialDriver> mDrivers = UsbSerialProber.getDefaultProber().findAllDrivers(mUsbManager);
+        List<UsbSerialPort> ports = null;
+        if(mDrivers.isEmpty()){throw no_connect;}
+
+        ports = mDrivers.get(0).getPorts();
+        mPort = ports.get(0);
+
+        mConnection = mUsbManager.openDevice(mPort.getDriver().getDevice());
+        try {
             mPort.open(mConnection);
             mPort.setParameters(115200, 8, UsbSerialPort.STOPBITS_1, UsbSerialPort.PARITY_NONE);
-        }catch (IOException e){
-            throw no_connect;
+        } catch (IOException e) {
+           throw no_connect;
         }
 
 

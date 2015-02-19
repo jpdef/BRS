@@ -43,6 +43,7 @@ public class Sensor {
     public void stopArdiuno(){
         try{
             writePort(sig_kill);
+            port.close();
         }catch (Exception e){
             // do somethign
         }

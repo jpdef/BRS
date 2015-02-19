@@ -2,6 +2,7 @@ package brs.com.brs;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.RectF;
 import android.os.Bundle;
 import android.util.FloatMath;
@@ -23,6 +24,7 @@ import android.widget.LinearLayout;
 
 import java.io.IOError;
 import java.io.IOException;
+import java.util.concurrent.ExecutionException;
 
 /**
  * Created by lesterpi on 2/1/15.
@@ -38,26 +40,40 @@ public class StartDetect extends Activity {
         super.onCreate(savedInstanceState);
         Sensor sensor = new Sensor(DeviceDetect.getPort());
         Radial radial = new Radial(this,sensor);
+        //test write
+        try {
+            sensor.writePort(sensor.sig_start);
+        }catch(Exception something){
+            Intent goback = new Intent(this, MainActivity.class);
+            startActivity(goback);
+
+        }
         setContentView(radial);
+
 
 
     }
     @Override
     protected void onPause() {
         super.onStop();
-        sensor.stopArdiuno();
+        //sensor.stopArdiuno();
+
     }
 
 
     @Override
     protected void onStop() {
         super.onStop();
+        //sensor.stopArdiuno();
+
 
     }
 
     @Override
     protected void onDestroy() {
         super.onDestroy();
+        //radial.surfaceDestroyed(radial.getHolder());
+
 
 
     }
@@ -69,6 +85,7 @@ public class StartDetect extends Activity {
     Paint paint;
     int maxH; int maxW;
     Sensor sensor;
+    String error = "";
 
 
 
@@ -98,7 +115,7 @@ public class StartDetect extends Activity {
         /*Get normalized data
           from sensor
           getData()*/
-
+        canvas.drawText(error,t2*(float)0.3,t1/2,paint);
         canvas.drawLines(makeArc(canvas,2),paint);
         canvas.drawLines(makeArc(canvas,3), paint);
         canvas.drawLines(makeArc(canvas,4),paint);
@@ -119,7 +136,7 @@ public class StartDetect extends Activity {
     @Override
     public void surfaceDestroyed(SurfaceHolder holder) {
         Log.v(gtag, "DESTROY");
-
+        sensor.stopArdiuno();
         thread.setRunning(false);
         boolean retry = true;
         while(retry){
@@ -131,6 +148,7 @@ public class StartDetect extends Activity {
 
             }
         }
+
     }
     /*
     *   Thread updates frames for canvas
@@ -164,12 +182,12 @@ public class StartDetect extends Activity {
                     Thread.sleep(100);
                 }catch (InterruptedException e){
 
-                }
-                try{
-                   sensor_data = sensor.getData();
-                }catch (Exception nrw){
-                    surfaceDestroyed(surfaceHolder);
-                    //setRunning(false);
+                    try {
+                        error =sensor.getData().toString();//test
+                    }catch (Exception e1){
+                        error = "Yes error";
+                    }
+
                 }
 
                 try {

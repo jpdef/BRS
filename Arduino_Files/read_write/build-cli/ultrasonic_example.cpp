@@ -12,7 +12,6 @@ int startByte =0;
 
 byte* packet;
 QueueList<long> q;
-QueueList<long*> ql;
 void setup() {
   // initialize serial communication:
   Serial.begin(115200);
@@ -104,9 +103,6 @@ void serialEvent(){
 void loop()
 {
  if(stp_strt){
-   long* a = (long*)malloc(6*sizeof(long));
-   ql.push(a);
-   long* r = ql.pop();
    q.push(get_distance(trigPin_1,echoPin_1));
    q.push(get_distance(trigPin_2,echoPin_2)); 
    delay(50);
