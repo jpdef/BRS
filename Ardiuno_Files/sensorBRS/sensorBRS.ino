@@ -1,19 +1,18 @@
-//working as of 2/12
-
-
-
+//#include <QueueList.h>
 #include <NewPing.h>
 
-#include <NewPing.h>
-
+//my libary
+extern "C"{
+  #include <List.h>
+}
 
 #define SONAR_NUM 2
-#define MAX_DISTANCE 200 // in cm
-#define PING_INTERVAL 33// time between sensor pings in ms -- 29ms is min
+#define MAX_DISTANCE  420// about 15 ft in cm -->need calculations to convert to inches
+#define PING_INTERVAL 33 // time between sensor pings in ms -- 29ms is min
 
 
 unsigned long pingTimer[SONAR_NUM]; //when to trigger pin(through array of sensors)
-unsigned int cm[SONAR_NUM]; // stores distance of specific sensor
+unsigned int inches[SONAR_NUM]; // stores distance of specific sensor
 uint8_t currentSensor = 0; // tracks active sensor
 
 NewPing sonar[SONAR_NUM] = {
@@ -21,41 +20,69 @@ NewPing sonar[SONAR_NUM] = {
 	NewPing(2,4,MAX_DISTANCE),
 };
 
+//QueueList <unsigned long> dataPacket; 
+//unsigned long sensorArray[]  = {0,0,0,0} // distance1,velocity1,distance2,velocity2
+List dataPacket = newList();
+
 void setup(){
 	Serial.begin(115200);
 	pingTimer[0] = millis() + 75; // millis() return time from start of program
-
-	for(uint8_t i=1; i < SONAR_NUM; i++){
+        for(uint8_t i=1; i < SONAR_NUM; i++){
 		pingTimer[i] = (pingTimer[i-1] + PING_INTERVAL);
-    }
+        }
 }	
 	
 void loop(){
 	for(uint8_t i =0; i < SONAR_NUM; i++){
 		if(millis() >= pingTimer[i]){
-			pingTimer[i] += PING_INTERVAL * SONAR_NUM;
+			pingTimer[i] += PING_INTERVAL * SONAR_NUM; //continously updates trigger time
 			if(i==0 && currentSensor == SONAR_NUM - 1) oneSensorCycle();// reach last sensor in array
 			sonar[currentSensor].timer_stop();  // disables iterrupts in case was still running
 			currentSensor=i; //update sensor working with
-			cm[currentSensor] = 0; //reintialize distance to 0
-			sonar[currentSensor].ping_timer(echoCheck); 
+			inches[currentSensor] = 0; //reintialize distance to 0
+			sonar[currentSensor].ping_timer(echoCheck); //sets interrupt and check frequency 
 		}
 	}
 }
 
+//checked every 2 micro seconds-- set in ping_timer()
 void echoCheck() {  //If ping received, set the sensor distance to array.
     if (sonar[currentSensor].check_timer())
-         cm[currentSensor] = sonar[currentSensor].ping_result / US_ROUNDTRIP_IN;
+         inches[currentSensor] = sonar[currentSensor].ping_result / US_ROUNDTRIP_IN;
 }
-      
+ 
 void oneSensorCycle() { // Sensor ping cycle complete, do something with the results.
   	for (uint8_t i = 0; i < SONAR_NUM; i++) {
-    	Serial.print(i);
-    	Serial.print("=");
-    	Serial.print(cm[i]);
-    	Serial.print("inches ");
-  	}
-  		Serial.println();
+    	  //to serial monitor
+    	  if(inches[i]!=0){
+            Serial.print(i); 
+    	    Serial.print(" =");
+    	    Serial.print(inches[i]);
+    	    Serial.print(" inches ");
+            Serial.println();
+    	    //dataPacket.push(inches[i]); //to send
+          }
+        }
+
+        
+  	//Serial.println();
+  	//Serial.print("data ready to send");
+        //Serial.println();
+        /*Serial.print("the front of the list");
+        Serial.print(front(dataP));
+        Serial.println();
+        Serial.print("the back of the list");
+        Serial.print(back(dataP));
+        
+        sendData();
+        clear(dataP);
+  	*/
+        append(dataPacket,inches);
+        //deleteBack(dataPacket);
+        clear(dataPacket); // not sure when to delete/how many will queue up? 
+        //Serial.println();
 }
 
-
+ 
+void sendData(){
+}
