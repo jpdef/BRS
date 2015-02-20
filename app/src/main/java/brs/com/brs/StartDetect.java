@@ -22,6 +22,8 @@ import android.view.Menu;
 import android.widget.Button;
 import android.widget.LinearLayout;
 
+import com.hoho.android.usbserial.util.HexDump;
+
 import java.io.IOError;
 import java.io.IOException;
 import java.util.concurrent.ExecutionException;
@@ -41,13 +43,13 @@ public class StartDetect extends Activity {
         Sensor sensor = new Sensor(DeviceDetect.getPort());
         Radial radial = new Radial(this,sensor);
         //test write
-        try {
+        /*try {
             sensor.writePort(sensor.sig_start);
         }catch(Exception something){
             Intent goback = new Intent(this, MainActivity.class);
             startActivity(goback);
 
-        }
+        }*/
         setContentView(radial);
 
 
@@ -85,7 +87,6 @@ public class StartDetect extends Activity {
     Paint paint;
     int maxH; int maxW;
     Sensor sensor;
-    String error = "";
 
 
 
@@ -96,8 +97,9 @@ public class StartDetect extends Activity {
         maxH = bgr.getWidth();
         maxW = bgr.getHeight();
         paint = new Paint();
-        paint.setColor(Color.parseColor("#ffffff"));
         paint.setStrokeWidth(3);
+        paint.setColor(Color.parseColor("#00ff00"));
+
         this.sensor = sensor;
 
 
@@ -108,19 +110,23 @@ public class StartDetect extends Activity {
 
     @Override
     public void onDraw(Canvas canvas){
-        float t1 = (float)maxH;
-        float t2 = (float)maxW;
-        canvas.drawBitmap(bgr,t2,t1,paint);
-        Log.v(gtag,"ondraw accessed");
+        float t1 = (float) canvas.getWidth();
+        float t2 = (float) canvas.getHeight();
+        canvas.drawBitmap(bgr,maxW,maxH,paint);
+        //Log.v(gtag,"ondraw accessed");
         /*Get normalized data
           from sensor
           getData()*/
-        canvas.drawText(error,t2*(float)0.3,t1/2,paint);
+        canvas.drawColor(Color.BLACK); // clears screen
+        float endX =  t1/2;
+        float endY =  (thread.test_radius+1)*(t2/2);
+
+        canvas.drawCircle(endX,endY,maxW/10,paint);
+
         canvas.drawLines(makeArc(canvas,2),paint);
         canvas.drawLines(makeArc(canvas,3), paint);
         canvas.drawLines(makeArc(canvas,4),paint);
         makeSectors(canvas,paint);
-
 
     }
     @Override
@@ -128,6 +134,11 @@ public class StartDetect extends Activity {
 
     @Override
     public void surfaceCreated(SurfaceHolder holder) {
+        try {
+            sensor.writePort(sensor.sig_start);
+        }catch(IOException e){
+            //
+        }
         thread = new radialThread(getHolder(),this);
         thread.setRunning(true);
         thread.start();
@@ -157,6 +168,8 @@ public class StartDetect extends Activity {
         private SurfaceHolder surfaceHolder; //underlying canvas for next frame
         private Radial mainView;
         private volatile boolean run = false;
+        float test_radius = 0;
+
 
         //constructor
         public radialThread(SurfaceHolder surfaceHolder, Radial mainView){
@@ -182,12 +195,17 @@ public class StartDetect extends Activity {
                     Thread.sleep(100);
                 }catch (InterruptedException e){
 
-                    try {
-                        error =sensor.getData().toString();//test
-                    }catch (Exception e1){
-                        error = "Yes error";
-                    }
 
+                }
+
+                try {
+                    //error = HexDump.dumpHexString(sensor.readPort());
+                    paint.setColor(Color.parseColor("#00ff00"));
+                    test_radius  = sensor.getData()[0];
+                }catch (Exception e1){
+                    //test_radius = (float)Math.random();
+                    paint.setColor(Color.parseColor("#ff0000"));
+                    Log.v(gtag,"Couldn't read");
                 }
 
                 try {

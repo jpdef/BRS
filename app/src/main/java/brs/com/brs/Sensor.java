@@ -1,4 +1,6 @@
 package brs.com.brs;
+import android.util.Log;
+
 import java.io.IOException;
 import java.util.List;
 import com.hoho.android.usbserial.driver.UsbSerialPort;
@@ -9,8 +11,8 @@ import com.hoho.android.usbserial.util.HexDump;
  */
 public class Sensor {
     UsbSerialPort port;
-    int readtime =200;
-    int writetime=200;
+    int readtime =500;
+    int writetime=500;
     IOException no_write;
     IOException no_read ;
 
@@ -18,6 +20,7 @@ public class Sensor {
     public final byte sig_start = (byte) 0xFF;
     public final byte sig_error = (byte) 0xEF;
     public final byte sig_kill  = (byte) 0xEE;
+    public final byte s1        =  (byte) 0xFE;
 
     public Sensor(UsbSerialPort port){
        this.port =port;
@@ -27,16 +30,16 @@ public class Sensor {
     *
     * */
     public float[] getData() throws Exception{
-        try {
-            writePort(sig_start);
+       // try {
+        //    writePort(sig_start);
             try {
-                 return decode(readPort());
+                 return sparse_decode(readPort());
             }catch (Exception nr){
                 throw no_read;
             }
-        }catch (Exception nw){
-            throw no_write;
-        }
+       // }catch (Exception nw){
+       //     throw no_write;
+       // }
 
    }
 
@@ -81,7 +84,7 @@ public class Sensor {
 *              -IO exception no_read
 */
     protected byte[] readPort() throws IOException{
-        byte buffer_in[] = new byte[32];
+        byte buffer_in[] = new byte[6];
         try {
             int numBytesRead = port.read(buffer_in, readtime);
             if(numBytesRead >0){
@@ -117,10 +120,32 @@ public class Sensor {
             i+=2;
             ++j;
         }
-
+        Log.v("Sensor output:", output[0] + " : " + output[2] );
         return output;
 
     }
+    protected float[] sparse_decode(byte[] buffer_in ){
+        float output[] = new float[6];
+        int i =0;
+        while( i < buffer_in.length ) {
+            switch (buffer_in[i]) {
+                case sig_start:
+                    output[0] = (float) (buffer_in[i+1]);
+                    output[0] /= (float) 255;           //scale
+                    i+=2;
+                    break;
+                case s1:
+                    output[1] = (float) (buffer_in[i+1]);
+                    output[1] /= (float) 255;           //scale
+                    i+=2;
+                    break;
+                case 0x00:
+                    ++i;
+            }
+        }
+        Log.v("Sensor output:", output[0] + " : " + output[2] );
+        return output;
 
+    }
 
 }
