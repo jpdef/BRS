@@ -149,6 +149,8 @@ public class DeviceDetect extends Activity {
     }
 
 
+
+
 /*decode()
  *      Parameters: Byte Buffer
  *      Returns: List of longs
