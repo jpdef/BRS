@@ -22,7 +22,7 @@ NewPing sonar[SONAR_NUM] = {
 	NewPing(2,4,MAX_DISTANCE),
 };
 
-QueueList <unsigned long> databuffer; 
+QueueList <uint8_t*> databuffer; 
 //unsigned long sensorArray[]  = {0,0,0,0} // distance1,velocity1,distance2,velocity2
 //List databuffer = newList();
 
@@ -87,12 +87,12 @@ void oneSensorCycle() { // Sensor ping cycle complete, do something with the res
         //Serial.println();
 }
 
-void long_to_byte(unit8_t num, byte* byte_array, int start){
+void long_to_byte(uint8_t num, byte* byte_array, int start){
      byte_array[start] = (num & 0x000000FFUL);
 }
 
 
-void send_packet(unit8_t* data,int err){
+void send_packet(uint8_t* data,int err){
      /* Need to implement error packet*/     
      packet[0] = 0x00; 
      packet[1] = 0xFF;               // start 
@@ -114,8 +114,8 @@ void serialEvent(){
    if(sig_byte == 0xFF){
       stp_strt = true;
       int i = 0;
-       if(!databuffer.isEmpty)
-       send_packet(databuffer.pop(),1);
+      if(!databuffer.isEmpty())
+      send_packet(databuffer.pop(),1);
     }else{
        Serial.write(0xEE);
        stp_strt = false;
@@ -123,7 +123,6 @@ void serialEvent(){
              q.pop();
        }
     }
-
 }
 
 
