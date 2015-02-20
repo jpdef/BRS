@@ -1,4 +1,4 @@
-//#include <QueueList.h>
+#include <QueueList.h>
 #include <NewPing.h>
 
 //my libary
@@ -20,9 +20,9 @@ NewPing sonar[SONAR_NUM] = {
 	NewPing(2,4,MAX_DISTANCE),
 };
 
-//QueueList <unsigned long> dataPacket; 
+QueueList <unsigned int*> dataPacket; 
 //create newList
-List dataPacket = newList();
+//List dataPacket = newList();
 
 void setup(){
 	Serial.begin(115200);
@@ -59,13 +59,16 @@ void oneSensorCycle() { // Sensor ping cycle complete, do something with the res
     	  Serial.print(" =");
     	  Serial.print(inches[i]);
     	  Serial.print(" inches ");
-    	  //dataPacket.push(inches[i]); //to send
+    	  
         }
 
         
-  	   Serial.println();
-  	   Serial.print("data ready to send");
-       Serial.println();
+  	Serial.println();
+  	
+        Serial.println();
+        dataPacket.push(inches); //to send
+        Serial.print("data ready to send");
+        dataPacket.pop();
         /*Serial.print("the front of the list");
         Serial.print(front(dataP));
         Serial.println();
@@ -74,10 +77,10 @@ void oneSensorCycle() { // Sensor ping cycle complete, do something with the res
         
         sendData();
         clear(dataP);
-  	    */
-        append(dataPacket,inches);
+  	 */
+        //append(dataPacket,inches);
         //clear(dataPacket); // not sure when to delete/how many will queue up? 
-        deleteFront(dataPacket);
+        //deleteFront(dataPacket);
         Serial.println();
 }
 
