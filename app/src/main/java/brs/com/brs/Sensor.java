@@ -115,8 +115,8 @@ public class Sensor {
         ++i;
         int j = 0;
         while( j < 6 && i < buffer_in.length && buffer_in[i] != sig_kill) {
-            output[j] = (float)(buffer_in[i]);
-            output[j] /=(float)255;           //scale
+            output[j] = (long)(buffer_in[i]);
+            output[j] /=(float)150;           //scale
             i+=2;
             ++j;
         }

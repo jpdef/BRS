@@ -200,8 +200,9 @@ public class StartDetect extends Activity {
                     try {
                         //error = HexDump.dumpHexString(sensor.readPort());
                         paint.setColor(Color.parseColor("#00ff00"));
+                        float[] tmp = sensor.getData();
                         for(int i = 0;i < 6; ++i){
-                            radii[i] = sensor.getData()[i];
+                            if(tmp[i]!=0) radii[i] = tmp[i];
                         }
                     }catch (Exception e1){
                         //test_radius = (float)Math.random();
