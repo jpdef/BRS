@@ -5,20 +5,19 @@
 #define MAX_DISTANCE 500 // 500 inches = 1270 cm = 41 ft  & 15ft=180in=457.2
 #define PING_INTERVAL 33 // time between sensor pings in ms -- 29ms is min
 
-unsigned long pingTimer[SONAR_NUM]; //when to trigger pin(through array of sensors)
-unsigned int inches[SONAR_NUM]; // stores distance of specific sensor
-uint8_t currentSensor = 0; // tracks active sensor
+unsigned long pingTimer[SONAR_NUM];  //when to trigger pin(through array of sensors)
+unsigned int inches[SONAR_NUM];      // stores distance of specific sensor
+uint8_t currentSensor = 0;           // tracks active sensor
 volatile boolean stp_strt = true;
 NewPing sonar[SONAR_NUM] = {
 	NewPing(12,8,MAX_DISTANCE),
 	NewPing(2,4,MAX_DISTANCE),
 };
 
-bool send =false;
+/*defines write buffer*/
 int packet_size = 16;
 byte* packet = (byte*)calloc(packet_size,sizeof(byte));
 
-QueueList <unsigned int> databuffer; 
 void print_data(){
   	for (uint8_t i = 0; i < SONAR_NUM; i++) {
     	  Serial.print(i); 
@@ -29,18 +28,19 @@ void print_data(){
   	Serial.println();
 }
 
-//checked every 2 micro seconds
-void echoCheck() {  //If ping received, set the sensor distance to array.
+/*checks distance every 2ms, updates inches array*/
+void echoCheck() {   
     if (sonar[currentSensor].check_timer())
          inches[currentSensor] = sonar[currentSensor].ping_result / US_ROUNDTRIP_IN;
 }
 
 
-
+/*converts uint to byte for serial communication*/
 void int_to_byte(unsigned int num, byte* byte_array, int start){
      byte_array[start] = num;
 }
 
+/*makes packet out of data, then sends*/
 void send_packet(int err){
      /* Need to implement error packet*/     
      packet[0] = 0x00; 
@@ -56,12 +56,10 @@ void send_packet(int err){
      packet[packet_size-2] =  0xEE; //end
      packet[packet_size-1] =  0x00;             
      Serial.write(packet,packet_size);
-     //Serial.flush();
 }
 
 
-void oneSensorCycle() { // Sensor ping cycle complete, do something with the results.
-       // push data to queue;
+void oneSensorCycle() {        // Sensor ping cycle complete, send packet.
            if(inches[0] >0){
               send_packet(0);
               Serial.flush();
@@ -77,37 +75,36 @@ void setup(){
         }
 }	
 
-
+/*Handles control signals from android*/
 void serialEvent(){ 
    int num_bytes = Serial.available();
-   Serial.write(0x05);
-while(num_bytes>0){
-   int sig_byte = Serial.read();
-   --num_bytes;
-   if(sig_byte == 0xFF){
-      stp_strt =true;
-      break;
-    }else{
-      stp_strt = false;
-      break;
-     }
+   while(num_bytes>0){
+         int sig_byte = Serial.read();
+         --num_bytes;
+         if(sig_byte == 0xFF){
+            stp_strt =true;
+            break;
+         }else{
+            stp_strt = false;
+            break;
+         }
    }
 }
 
 void loop(){
      if(stp_strt){
        for(uint8_t i =0; i < SONAR_NUM; i++){
-		if(millis() >= pingTimer[i]){
-			pingTimer[i] += PING_INTERVAL * SONAR_NUM;                  //continously updates trigger time
-			if(i==0 && currentSensor == SONAR_NUM - 1)
-                                oneSensorCycle();                                    //reach last sensor in array
-                        sonar[currentSensor].timer_stop();                           //disables iterrupts in case was still running
-			currentSensor=i;                                             //update sensor working with
-			inches[currentSensor] = 0;                                   //reintialize distance to 0
-			sonar[currentSensor].ping_timer(echoCheck); //sets interrupt and check frequency 
-		}
-	}
-      }
+           if(millis() >= pingTimer[i]){
+	      pingTimer[i] += PING_INTERVAL * SONAR_NUM;                   //continously updates trigger time
+	      if(i==0 && currentSensor == SONAR_NUM - 1)                   //reach last sensor in array 
+                 oneSensorCycle();                                         //send out data  
+              sonar[currentSensor].timer_stop();                           //disables iterrupts in case was still running
+              currentSensor=i;                                             //update sensor working with
+              inches[currentSensor] = 0;                                   //reintialize distance to 0
+              sonar[currentSensor].ping_timer(echoCheck);                  //sets interrupt and check frequency 
+           }
+       }
+    }
 }
 
  
