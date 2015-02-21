@@ -19,7 +19,7 @@ public class Sensor {
     /*Byte signals*/
     public final byte sig_start = (byte) 0xFF;
     public final byte sig_error = (byte) 0xEF;
-    public final byte sig_kill  = (byte) 0xEE;
+    public final byte sig_kill  =  (byte) 0xEE;
     public final byte s1        =  (byte) 0xFE;
 
     public Sensor(UsbSerialPort port){
@@ -30,18 +30,18 @@ public class Sensor {
     *
     * */
     public float[] getData() throws Exception{
-       // try {
-        //    writePort(sig_start);
+        try {
+          // writePort(sig_start);
             try {
-                 return sparse_decode(readPort());
+                 return decode(readPort());
             }catch (Exception nr){
                 throw no_read;
             }
-       // }catch (Exception nw){
-       //     throw no_write;
-       // }
+        }catch (Exception nw){
+            throw no_write;
+        }
 
-   }
+    }
 
     public void stopArdiuno(){
         try{
@@ -84,7 +84,7 @@ public class Sensor {
 *              -IO exception no_read
 */
     protected byte[] readPort() throws IOException{
-        byte buffer_in[] = new byte[6];
+        byte buffer_in[] = new byte[32];
         try {
             int numBytesRead = port.read(buffer_in, readtime);
             if(numBytesRead >0){
