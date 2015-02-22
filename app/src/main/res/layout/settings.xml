@@ -2,101 +2,60 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:id="@+id/settings_layout"
     android:orientation="vertical"
-    android:background="@drawable/gradient_blue">
+    android:paddingLeft="@dimen/activity_horizontal_margin"
+    android:paddingRight="@dimen/activity_horizontal_margin"
+    android:paddingTop="@dimen/activity_vertical_margin"
+    android:paddingBottom="@dimen/activity_vertical_margin"
+    android:background="@drawable/background_dark">
 
-
-    <ScrollView
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:layout_weight="1"
-        >
 
         <LinearLayout
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical" >
-            <Button
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Settings"
+                android:layout_gravity="center"
+                android:textSize="50sp"/>
+            <LinearLayout
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
-                android:gravity="left"
-                android:padding="10dp"
-                android:background="@drawable/settings_button_selector"
-                android:text="Settings 1" />
-
-            <Button
+                android:orientation="horizontal" >
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:textSize="25sp"
+                android:text="Proximity"/>
+            <SeekBar
+                android:id="@+id/seekBar"
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
-                android:gravity="left"
-                android:padding="10dp"
-                android:background="@drawable/settings_button_selector"
-                android:text="Settings 2" />
-            <Button
-                android:layout_width="fill_parent"
+                android:layout_alignParentLeft="true"
+                android:layout_alignParentTop="true"
+                android:paddingLeft="24dp"
+                android:max="10"/>
+                </LinearLayout>
+            <ToggleButton
+                android:id="@+id/button_alert"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:gravity="left"
-                android:padding="10dp"
-                android:background="@drawable/settings_button_selector"
-                android:text="Settings 3" />
-
-
-            <Button
-                android:layout_width="fill_parent"
+                android:textOn="Auto Alert On"
+                android:textOff="Auto Alert Off"
+                android:onClick="autoAlert"
+                android:textSize="25sp"/>
+            <ToggleButton
+                android:id="@+id/button_theme"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:gravity="left"
-                android:padding="10dp"
-                android:background="@drawable/settings_button_selector"
-                android:text="Settings 4" />
-
-
-            <Button
-                android:layout_width="fill_parent"
-                android:layout_height="wrap_content"
-                android:gravity="left"
-                android:padding="10dp"
-                android:background="@drawable/settings_button_selector"
-                android:text="Settings 5" />
-
-            <Button
-                android:layout_width="fill_parent"
-                android:layout_height="wrap_content"
-                android:gravity="left"
-                android:padding="10dp"
-                android:background="@drawable/settings_button_selector"
-                android:text="Settings 6" />
-
-            <Button
-                android:layout_width="fill_parent"
-                android:layout_height="wrap_content"
-                android:gravity="left"
-                android:padding="10dp"
-                android:background="@drawable/settings_button_selector"
-                android:text="Settings 7" />
-            <Button
-                android:layout_width="fill_parent"
-                android:layout_height="wrap_content"
-                android:gravity="left"
-                android:padding="10dp"
-                android:background="@drawable/settings_button_selector"
-                android:text="Settings 8" />
-
-            <Button
-                android:layout_width="fill_parent"
-                android:layout_height="wrap_content"
-                android:gravity="left"
-                android:padding="10dp"
-                android:background="@drawable/settings_button_selector"
-                android:text="Settings 9" />
+                android:textOn="Light Theme"
+                android:textOff="Dark Theme"
+                android:onClick="themeChange"
+                android:textSize="25sp"/>
 
         </LinearLayout>
-    </ScrollView>
-
-    <!--     <LinearLayout
-            android:layout_width="wrap_content"
-            android:layout_height="fill_parent"
-            android:layout_weight="1" >
-        </LinearLayout> -->
-
-
-
 </LinearLayout>
