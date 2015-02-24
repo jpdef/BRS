@@ -49,7 +49,7 @@ public class DeviceDetect{
     }
 
     public static boolean isConnected(){
-        if (mUsbManager.getDeviceList().isEmpty() ||mConnection.getFileDescriptor()<0) {
+        if (mPort == null || mUsbManager.getDeviceList().isEmpty()) {
             return false;
         }
         return true;

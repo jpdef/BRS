@@ -40,17 +40,14 @@ public class StartDetect extends Activity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        Sensor sensor = new Sensor(DeviceDetect.getPort());
-        Radial radial = new Radial(this,sensor);
-        //test write
-        /*try {
-            sensor.writePort(sensor.sig_start);
-        }catch(Exception something){
-            Intent goback = new Intent(this, MainActivity.class);
-            startActivity(goback);
-        }*/
-        setContentView(radial);
-
+        if(DeviceDetect.isConnected()) {
+            Sensor sensor = new Sensor(DeviceDetect.getPort());
+            Radial radial = new Radial(this, sensor);
+            setContentView(radial);
+        }else{
+            Intent intent = new Intent(StartDetect.this,MainActivity.class);
+            startActivity(intent);
+        }
 
 
     }
@@ -80,7 +77,6 @@ public class StartDetect extends Activity {
     }
 
     public class Radial extends SurfaceView implements SurfaceHolder.Callback{
-        int numPts = 200; // resolution
         radialThread thread;
         Bitmap bgr;
         Paint paint;
@@ -134,19 +130,21 @@ public class StartDetect extends Activity {
         @Override
         public void surfaceCreated(SurfaceHolder holder) {
             try {
-                sensor.writePort(sensor.sig_start);
+                if(DeviceDetect.isConnected()) sensor.writePort(sensor.sig_start);
+                thread = new radialThread(getHolder(),this);
+                thread.setRunning(true);
+                thread.start();
             }catch(IOException e){
-                //
+                Intent intent = new Intent(StartDetect.this,MainActivity.class);
+                startActivity(intent);
             }
-            thread = new radialThread(getHolder(),this);
-            thread.setRunning(true);
-            thread.start();
+
         }
 
         @Override
         public void surfaceDestroyed(SurfaceHolder holder) {
             Log.v(gtag, "DESTROY");
-            sensor.stopArdiuno();
+            //sensor.stopArdiuno();
             thread.setRunning(false);
             boolean retry = true;
             while(retry){
@@ -198,14 +196,14 @@ public class StartDetect extends Activity {
                     }
 
                     try {
-                        //error = HexDump.dumpHexString(sensor.readPort());
                         paint.setColor(Color.parseColor("#00ff00"));
-                        float[] tmp = sensor.getData();
+                        float[] tmp = {0,0,0,0,0,0};
+                        if(DeviceDetect.isConnected()) tmp = sensor.getData();
                         for(int i = 0;i < 6; ++i){
                             if(tmp[i]!=0) radii[i] = tmp[i];
                         }
                     }catch (Exception e1){
-                        //test_radius = (float)Math.random();
+                        setRunning(false);
                         paint.setColor(Color.parseColor("#ff0000"));
                         Log.v(gtag,"Couldn't read");
                     }
