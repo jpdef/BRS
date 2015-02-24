@@ -204,10 +204,6 @@ public class StartDetect extends Activity {
 
     }
 
-    public void GoBack(View view){
 
-        finish();
-
-    }
 
 }
