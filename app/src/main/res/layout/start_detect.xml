@@ -6,22 +6,6 @@
     android:background="#ff040404">
 
 
-    <SurfaceView
-        android:layout_width="match_parent"
-        android:layout_height="193dp"
-        android:id="@+id/mainSurfView"
-        android:background="@color/primary_material_dark"
-        android:layout_weight="1" />
-
-    <Button
-        android:layout_width="386dp"
-        android:layout_height="wrap_content"
-        android:onClick="GoBack"
-        android:layout_gravity="right"
-        android:id="@+id/stop"
-        android:background="#ffb23842"
-        android:textAlignment="center"
-        style="@style/Base.TextAppearance.AppCompat" />
 </LinearLayout>
 
 

@@ -1,4 +1,6 @@
 package brs.com.brs;
+import android.util.Log;
+
 import java.io.IOException;
 import java.util.List;
 import com.hoho.android.usbserial.driver.UsbSerialPort;
@@ -9,13 +11,45 @@ import com.hoho.android.usbserial.util.HexDump;
  */
 public class Sensor {
     UsbSerialPort port;
-    int readtime =200;
-    int writetime=200;
+    int readtime =500;
+    int writetime=500;
     IOException no_write;
     IOException no_read ;
 
+    /*Byte signals*/
+    public final byte sig_start = (byte) 0xFF;
+    public final byte sig_error = (byte) 0xEF;
+    public final byte sig_kill  =  (byte) 0xEE;
+    public final byte s1        =  (byte) 0xFE;
+
     public Sensor(UsbSerialPort port){
-        this.port =port;
+       this.port =port;
+    }
+
+    /* getData()
+    *
+    * */
+    public float[] getData() throws Exception{
+        try {
+          // writePort(sig_start);
+            try {
+                 return decode(readPort());
+            }catch (Exception nr){
+                throw no_read;
+            }
+        }catch (Exception nw){
+            throw no_write;
+        }
+
+    }
+
+    public void stopArdiuno(){
+        try{
+            writePort(sig_kill);
+            port.close();
+        }catch (Exception e){
+            // do somethign
+        }
     }
 
 
@@ -44,7 +78,7 @@ public class Sensor {
 *      Returns: String (for now)
 *      Protocol:
 *              -Buffers 32 bytes
-*              -Reads for 0.2 secs
+*              -Reads for readtime secs
 *              -Return HEX string
 *      Errors:
 *              -IO exception no_read
@@ -70,5 +104,48 @@ public class Sensor {
     }
 
 
+    protected float[] decode(byte[] buffer_in ){
+        float output[] = new float[6];
+        Integer i =0;
+        for( ;i<buffer_in.length ; ++i){
+            if(buffer_in[i] == sig_start){
+                break; // find start signal
+            }
+        }
+        ++i;
+        int j = 0;
+        while( j < 6 && i < buffer_in.length && buffer_in[i] != sig_kill) {
+            output[j] = (long)(buffer_in[i]);
+            output[j] /=(float)150;           //scale
+            i+=2;
+            ++j;
+        }
+        Log.v("Sensor output:", output[0] + " : " + output[2] );
+        return output;
+
+    }
+    protected float[] sparse_decode(byte[] buffer_in ){
+        float output[] = new float[6];
+        int i =0;
+        while( i < buffer_in.length ) {
+            switch (buffer_in[i]) {
+                case sig_start:
+                    output[0] = (float) (buffer_in[i+1]);
+                    output[0] /= (float) 255;           //scale
+                    i+=2;
+                    break;
+                case s1:
+                    output[1] = (float) (buffer_in[i+1]);
+                    output[1] /= (float) 255;           //scale
+                    i+=2;
+                    break;
+                case 0x00:
+                    ++i;
+            }
+        }
+        Log.v("Sensor output:", output[0] + " : " + output[2] );
+        return output;
+
+    }
 
 }

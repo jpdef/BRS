@@ -30,121 +30,58 @@ import java.util.Queue;
 /**
  * Created by jake on 1/17/15.
  */
-public class DeviceDetect extends Activity {
+public class DeviceDetect{
     private static final String TAG = "DeviceDetect";
 
     //USB VARS
-    private UsbManager mUsbManager;
-    private UsbSerialPort mPort;
-    private UsbDeviceConnection mConnection;
-    private TextView infoView;
-    private int packetSize =10;
+    private static UsbManager mUsbManager;
+    private static UsbSerialPort mPort;
+    private static UsbDeviceConnection mConnection;
 
-/*Byte signals*/
-    private final byte sig_start = (byte) 0xFF;
-    private final byte sig_error = (byte) 0xEF;
-    private final byte sig_kill  = (byte) 0xEE;
-    private final IOException no_write;
-    private final IOException no_read;
-
-    {
-        no_write = new IOException("nw");
-        no_read = new IOException("nr");
-    }
+    public static Exception no_connect;
 
 
     /*-----------MAIN  FN'S--------------*/
-    /*
-      getPorts()
-            -gets manager for driver
-            -driver gets list of ports
-    */
-    protected List<UsbSerialPort> getPorts(){
-        mUsbManager = (UsbManager) getSystemService(Context.USB_SERVICE);
-        List<UsbSerialDriver> mDrivers = UsbSerialProber.getDefaultProber().findAllDrivers(mUsbManager);
-        List<UsbSerialPort> ports = null;
 
-        if(mDrivers.isEmpty()){
-            return ports;
-        }else{
-            sucess_message("Found driver");
-        }
-        ports = mDrivers.get(0).getPorts();
-        return ports;
-
-
+    static public void intializeSerial(Context context)
+    {
+         mUsbManager = (UsbManager) context.getSystemService(Context.USB_SERVICE);
     }
+
+    public static boolean isConnected(){
+        if (mPort == null || mUsbManager.getDeviceList().isEmpty()) {
+            return false;
+        }
+        return true;
+    }
+
+    public static UsbSerialPort getPort(){
+        return mPort;
+    }
+
 
 
     /*
     *  connectToDevice()
     *        -opens connection to port
+    *        -throws no-connect
     */
-    protected void connectToDevice(UsbSerialPort port){
-        UsbDeviceConnection mConnection = mUsbManager.openDevice(port.getDriver().getDevice());
-        try{
-            port.open(mConnection);
-            port.setParameters(115200, 8, UsbSerialPort.STOPBITS_1, UsbSerialPort.PARITY_NONE);
-        }catch (IOException e){
-            failure_message("Couldn't connect through port");
-        }
+    public static void connectToDevice() throws Exception{
+        List<UsbSerialDriver> mDrivers = UsbSerialProber.getDefaultProber().findAllDrivers(mUsbManager);
+        List<UsbSerialPort> ports = null;
+        if(mDrivers.isEmpty()){throw no_connect;}
 
+        ports = mDrivers.get(0).getPorts();
+        mPort = ports.get(0);
 
-
-    }
-
-
-/* writePort()
-*       Parameters: byte signal
-*       Returns: Void
-*       Protocol:
-*            -Converts Sig to Byte array
-*            -Wites for 0.5 sec
-*       Errors
-*             -IO exeception
- */
-    protected void writePort(byte sig) throws IOException{
-        byte[] sig_out = new byte[1];
-        sig_out[0] = sig;
-        try{
-            mPort.write(sig_out,200);
-        }catch (IOException e4){
-            failure_message("Couldn't write");
-            throw no_write;
-        }
-
-    }
-
-
-
-/* readPort()
-*      Parameters: N/A
-*      Returns: String (for now)
-*      Protocol:
-*              -Buffers 32 bytes
-*              -Reads for 0.2 secs
-*              -Return HEX string
-*      Errors:
-*              -IO exception
-*/
-    protected byte[] readPort() throws IOException{
-        byte buffer_in[] = new byte[32];
+        mConnection = mUsbManager.openDevice(mPort.getDriver().getDevice());
         try {
-            int numBytesRead = mPort.read(buffer_in, 200);
-            if(numBytesRead >0){
-               //String message = "Bytes:" + HexDump.dumpHexString((buffer_in)) + "\n";
-               return buffer_in;
-            }
-        } catch (IOException e6) {
-                failure_message("Couldn't Read/Write");
-                try {
-                    mPort.close();
-                } catch (IOException e7) {
-                    //ignore
-                }
-                throw no_read;
-
+            mPort.open(mConnection);
+            mPort.setParameters(115200, 8, UsbSerialPort.STOPBITS_1, UsbSerialPort.PARITY_NONE);
+        } catch (IOException e) {
+           throw no_connect;
         }
+<<<<<<< HEAD
          return buffer_in;
     }
 
@@ -273,79 +210,20 @@ public class DeviceDetect extends Activity {
         super.onStart();
         // The activity is about to become visible.
 
+=======
+>>>>>>> graphics
 
 
 
     }
-    @Override
-    protected void onResume() {
-        super.onResume();
-        //pass to next activity
-        //parcelable for mport
-        Intent i = new Intent(this,StartDetect.class);
 
 
-        //If no port connect to port
-        if (mPort == null) {
-            if (getPorts() != null) {
-                mPort = getPorts().get(0);
-                connectToDevice(mPort);
-
-            } else {
-                failure_message("Couldn't get a port");
-                return;
-            }
-        }else{
-            readHandle.postDelayed(readRun,0);
-        }
-
-    }
 
 
-    @Override
-    protected void onPause() {
-        super.onPause();
-        // Another activity is taking focus (this activity is about to be "paused").
-        Message msg = readHandle.obtainMessage();
-        msg.arg1 = sig_kill;
-        readHandle.handleMessage(msg);
 
-    }
-    @Override
-    protected void onStop() {
-        super.onStop();
-        // The activity is no longer visible (it is now "stopped")
-        //readHandle.handleMessage(sig_kill);
-        //readHandle.removeCallbacks(readRun);
 
-        Message msg = readHandle.obtainMessage();
-        msg.arg1 = sig_kill;
-        readHandle.handleMessage(msg);
 
-    }
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
-        Message msg = readHandle.obtainMessage();
-        msg.arg1 = sig_kill;
-        readHandle.handleMessage(msg);
 
-        // The activity is about to be destroyed.
-    }
-
-/*-----------UTIL FN'S-------------*/
-
-    public void failure_message(String warn){
-        TextView failureView = (TextView)findViewById(R.id.failureMessage);
-        failureView.setText("Failure" + warn);
-        failureView.setTextSize(40);
-    }
-
-    public void sucess_message(String warn){
-        TextView successView = (TextView)findViewById(R.id.sucessMessage);
-        successView.append("Sucess" + warn);
-        successView.setTextSize(40);
-    }
 
 
 

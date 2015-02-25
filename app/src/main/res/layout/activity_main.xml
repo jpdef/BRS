@@ -29,22 +29,30 @@ android:paddingBottom="@dimen/activity_vertical_margin" tools:context=".MainActi
         style="?android:attr/buttonStyleSmall"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="DeviceDetect"
-        android:id="@+id/button"
-        android:onClick="searchDevice"
-        android:layout_gravity="center"
-        android:layout_centerVertical="true"
-        android:layout_centerHorizontal="true"/>
-    <Button
-        style="?android:attr/buttonStyleSmall"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
         android:id="@+id/start"
         android:onClick="start"
         android:layout_gravity="center"
         android:layout_centerVertical="true"
         android:layout_centerHorizontal="true"
         android:background="@drawable/button_start_selector"/>
+
+    <Button
+        style="?android:attr/buttonStyleSmall"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Reconnect"
+        android:id="@+id/button"
+        android:onClick="connectDevice"
+        android:layout_gravity="center_horizontal"
+        android:layout_centerVertical="true"
+        android:layout_centerHorizontal="true"/>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Connected?"
+        android:id="@+id/connectView"
+        android:layout_gravity="center_horizontal" />
 
 
 </LinearLayout>

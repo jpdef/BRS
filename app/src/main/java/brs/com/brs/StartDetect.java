@@ -1,25 +1,32 @@
-package brs.com.brs;
+        package brs.com.brs;
 
-import android.app.Activity;
-import android.content.Context;
-import android.graphics.RectF;
-import android.os.Bundle;
-import android.util.FloatMath;
-import android.util.Log;
-import android.view.Surface;
-import android.view.SurfaceHolder;
-import android.view.SurfaceView;
-import android.view.View;
-import android.app.Activity;
-import android.graphics.Bitmap;
-import android.graphics.Canvas;
-import android.graphics.Color;
-import android.graphics.Paint;
-import android.graphics.drawable.BitmapDrawable;
-import android.os.Bundle;
-import android.view.Menu;
-import android.widget.Button;
-import android.widget.LinearLayout;
+        import android.app.Activity;
+        import android.content.Context;
+        import android.content.Intent;
+        import android.graphics.RectF;
+        import android.os.Bundle;
+        import android.util.FloatMath;
+        import android.util.Log;
+        import android.view.Surface;
+        import android.view.SurfaceHolder;
+        import android.view.SurfaceView;
+        import android.view.View;
+        import android.app.Activity;
+        import android.graphics.Bitmap;
+        import android.graphics.Canvas;
+        import android.graphics.Color;
+        import android.graphics.Paint;
+        import android.graphics.drawable.BitmapDrawable;
+        import android.os.Bundle;
+        import android.view.Menu;
+        import android.widget.Button;
+        import android.widget.LinearLayout;
+
+        import com.hoho.android.usbserial.util.HexDump;
+
+        import java.io.IOError;
+        import java.io.IOException;
+        import java.util.concurrent.ExecutionException;
 
 /**
  * Created by lesterpi on 2/1/15.
@@ -28,145 +35,198 @@ import android.widget.LinearLayout;
 public class StartDetect extends Activity {
     Radial radial;
     String gtag = new String("graphics:");
+    Sensor sensor;
+    float[] sensor_data;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        Radial radial = new Radial(this);
-        setContentView(radial);
+        if(DeviceDetect.isConnected()) {
+            Sensor sensor = new Sensor(DeviceDetect.getPort());
+            Radial radial = new Radial(this, sensor);
+            setContentView(radial);
+        }else{
+            Intent intent = new Intent(StartDetect.this,MainActivity.class);
+            startActivity(intent);
+        }
 
 
     }
     @Override
+    protected void onPause() {
+        super.onStop();
+        //sensor.stopArdiuno();
+
+    }
+
+
+    @Override
     protected void onStop() {
         super.onStop();
+        //sensor.stopArdiuno();
+
 
     }
 
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        radial.thread.stop();
+        //radial.surfaceDestroyed(radial.getHolder());
+
 
 
     }
 
     public class Radial extends SurfaceView implements SurfaceHolder.Callback{
-    int numPts = 200; // resolution
-    radialThread thread;
-    Bitmap bgr;
-    Paint paint;
-    int maxH; int maxW;
+        radialThread thread;
+        Bitmap bgr;
+        Paint paint;
+        int maxH; int maxW;
+        Sensor sensor;
 
 
 
-    public Radial(Context context){
-        super(context);
-        //Initalize bitmap parameters
-        bgr = Bitmap.createBitmap(480,800,Bitmap.Config.ARGB_8888);
-        maxH = bgr.getWidth();
-        maxW = bgr.getHeight();
-        paint = new Paint();
-        paint.setColor(Color.parseColor("#ffffff"));
-        paint.setStrokeWidth(3);
+        public Radial(Context context,Sensor sensor){
+            super(context);
+            //Initalize bitmap parameters
+            bgr = Bitmap.createBitmap(480,800,Bitmap.Config.ARGB_8888);
+            maxH = bgr.getWidth();
+            maxW = bgr.getHeight();
+            paint = new Paint();
+            paint.setStrokeWidth(3);
+            paint.setColor(Color.parseColor("#00ff00"));
+
+            this.sensor = sensor;
 
 
-        //Set canvas thread
-        getHolder().addCallback(this);
+            //Set canvas thread
+            getHolder().addCallback(this);
 
-    }
-
-    @Override
-    public void onDraw(Canvas canvas){
-        float t1 = (float)maxH;
-        float t2 = (float)maxW;
-        canvas.drawBitmap(bgr,t2,t1,paint);
-        Log.v(gtag,"ondraw accessed");
-        canvas.drawLines(makeArc(canvas,2),paint);
-        canvas.drawLines(makeArc(canvas,3), paint);
-        canvas.drawLines(makeArc(canvas,4),paint);
-        makeSectors(canvas,paint);
-
-
-    }
-    @Override
-    public void surfaceChanged(SurfaceHolder holder, int format, int width, int height) {}
-
-    @Override
-    public void surfaceCreated(SurfaceHolder holder) {
-        thread = new radialThread(getHolder(),this);
-        thread.setRunning(true);
-        thread.start();
-    }
-
-    @Override
-    public void surfaceDestroyed(SurfaceHolder holder) {
-        Log.v(gtag,"DESTROY");
-
-        thread.setRunning(false);
-        boolean retry = true;
-        while(retry){
-            try{
-                thread.join();
-                retry =false;
-
-            }catch(InterruptedException e){
-
-            }
-        }
-    }
-    /*
-    *   Thread updates frames for canvas
-    */
-    class radialThread extends Thread{
-        private SurfaceHolder surfaceHolder; //underlying canvas for next frame
-        private Radial mainView;
-        private boolean run = false;
-
-        //constructor
-        public radialThread(SurfaceHolder surfaceHolder, Radial mainView){
-            this.surfaceHolder = surfaceHolder;
-            this.mainView      = mainView;
-        }
-
-        //on/off
-        public void setRunning(boolean run){
-            this.run = run;
-        }
-
-        public SurfaceHolder getSurfaceHolder() {
-            return surfaceHolder;
         }
 
         @Override
-        public void run(){
-            Canvas c;
-            while(run){
-                c=null;
+        public void onDraw(Canvas canvas){
+            float endX = (float) canvas.getWidth();
+            float endY = (float) canvas.getHeight();
+            canvas.drawBitmap(bgr,maxW,maxH,paint);
+            //Log.v(gtag,"ondraw accessed");
+        /*Get normalized data
+          from sensor
+          getData()*/
+            canvas.drawColor(Color.BLACK); // clears screen
+            float six = 6;
+            for(int i =0;i<6; ++i){
+                canvas.drawCircle(i*endX/6,(1+thread.radii[i])*endY/(float)2,maxW/15,paint);
+            }
+
+            canvas.drawLines(makeArc(canvas,2),paint);
+            canvas.drawLines(makeArc(canvas,3), paint);
+            canvas.drawLines(makeArc(canvas,4),paint);
+            makeSectors(canvas,paint);
+
+        }
+        @Override
+        public void surfaceChanged(SurfaceHolder holder, int format, int width, int height) {}
+
+        @Override
+        public void surfaceCreated(SurfaceHolder holder) {
+            try {
+                if(DeviceDetect.isConnected()) sensor.writePort(sensor.sig_start);
+                thread = new radialThread(getHolder(),this);
+                thread.setRunning(true);
+                thread.start();
+            }catch(IOException e){
+                Intent intent = new Intent(StartDetect.this,MainActivity.class);
+                startActivity(intent);
+            }
+
+        }
+
+        @Override
+        public void surfaceDestroyed(SurfaceHolder holder) {
+            Log.v(gtag, "DESTROY");
+            //sensor.stopArdiuno();
+            thread.setRunning(false);
+            boolean retry = true;
+            while(retry){
                 try{
-                    Thread.sleep(100);
-                }catch (InterruptedException e){
+                    thread.join();
+                    retry =false;
+
+                }catch(InterruptedException e){
 
                 }
+            }
 
-                try {
-                    c = surfaceHolder.lockCanvas(null);
-                    if(c!=null){
-                      synchronized (surfaceHolder) {
-                          mainView.onDraw(c);
-                      }
+        }
+        /*
+        *   Thread updates frames for canvas
+        */
+        class radialThread extends Thread{
+            private SurfaceHolder surfaceHolder; //underlying canvas for next frame
+            private Radial mainView;
+            private volatile boolean run = false;
+            float[] radii = new float[6];
+
+
+            //constructor
+            public radialThread(SurfaceHolder surfaceHolder, Radial mainView){
+                this.surfaceHolder = surfaceHolder;
+                this.mainView      = mainView;
+            }
+
+            //on/off
+            public void setRunning(boolean run){
+                this.run = run;
+            }
+
+            public SurfaceHolder getSurfaceHolder() {
+                return surfaceHolder;
+            }
+
+            @Override
+            public void run(){
+                Canvas c;
+                while(run){
+                    c=null;
+                    try{
+                        Thread.sleep(100);
+                    }catch (InterruptedException e){
+
+
                     }
-                }finally{
-                    if(c!=null){
-                        surfaceHolder.unlockCanvasAndPost(c);
+
+                    try {
+                        paint.setColor(Color.parseColor("#00ff00"));
+                        float[] tmp = {0,0,0,0,0,0};
+                        if(DeviceDetect.isConnected()) tmp = sensor.getData();
+                        for(int i = 0;i < 6; ++i){
+                            if(tmp[i]!=0) radii[i] = tmp[i];
+                        }
+                    }catch (Exception e1){
+                        setRunning(false);
+                        paint.setColor(Color.parseColor("#ff0000"));
+                        Log.v(gtag,"Couldn't read");
+                    }
+
+                    try {
+                        c = surfaceHolder.lockCanvas(null);
+                        if(c!=null){
+                            synchronized (surfaceHolder) {
+                                mainView.onDraw(c);
+                            }
+                        }
+                    }finally {
+                        if (c != null) {
+                            surfaceHolder.unlockCanvasAndPost(c);
+                        }
                     }
                 }
             }
+
+
         }
 
-
     }
-
-}
 
 
 
