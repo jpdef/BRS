@@ -1,5 +1,4 @@
 package brs.com.brs;
-import android.util.Log;
 
 import java.io.IOException;
 import java.util.List;
@@ -105,7 +104,7 @@ public class Sensor {
 
 
     protected float[] decode(byte[] buffer_in ){
-        float output[] = new float[6];
+        float output[] = new float[12];
         Integer i =0;
         for( ;i<buffer_in.length ; ++i){
             if(buffer_in[i] == sig_start){
@@ -115,37 +114,16 @@ public class Sensor {
         ++i;
         int j = 0;
         while( j < 6 && i < buffer_in.length && buffer_in[i] != sig_kill) {
-            output[j] = (long)(buffer_in[i]);
-            output[j] /=(float)150;           //scale
+            output[j] = 0xFF & (buffer_in[i]);
+            output[j] /=(float) 200;           //scale
+            output[j+6] = (0xFF & (buffer_in[i]))/(float)(200);
             i+=2;
             ++j;
         }
-        Log.v("Sensor output:", output[0] + " : " + output[2] );
+        //Log.v("Sensor output:", output[0] + " : " + output[2] );
         return output;
 
     }
-    protected float[] sparse_decode(byte[] buffer_in ){
-        float output[] = new float[6];
-        int i =0;
-        while( i < buffer_in.length ) {
-            switch (buffer_in[i]) {
-                case sig_start:
-                    output[0] = (float) (buffer_in[i+1]);
-                    output[0] /= (float) 255;           //scale
-                    i+=2;
-                    break;
-                case s1:
-                    output[1] = (float) (buffer_in[i+1]);
-                    output[1] /= (float) 255;           //scale
-                    i+=2;
-                    break;
-                case 0x00:
-                    ++i;
-            }
-        }
-        Log.v("Sensor output:", output[0] + " : " + output[2] );
-        return output;
 
-    }
 
 }

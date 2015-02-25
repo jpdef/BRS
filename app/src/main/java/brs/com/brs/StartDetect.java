@@ -108,20 +108,25 @@ public class StartDetect extends Activity {
             float endX = (float) canvas.getWidth();
             float endY = (float) canvas.getHeight();
             canvas.drawBitmap(bgr,maxW,maxH,paint);
-            //Log.v(gtag,"ondraw accessed");
-        /*Get normalized data
-          from sensor
-          getData()*/
-            canvas.drawColor(Color.BLACK); // clears screen
-            float six = 6;
-            for(int i =0;i<6; ++i){
-                canvas.drawCircle(i*endX/6,(1+thread.radii[i])*endY/(float)2,maxW/15,paint);
-            }
 
+            canvas.drawColor(Color.BLACK); // clears screen
             canvas.drawLines(makeArc(canvas,2),paint);
             canvas.drawLines(makeArc(canvas,3), paint);
             canvas.drawLines(makeArc(canvas,4),paint);
             makeSectors(canvas,paint);
+
+            //float six = 6;
+            for(int i =0;i<6; ++i){
+                //canvas.drawCircle(i*endX/6,(1+thread.radii[i])*endY/(float)2,maxW/15,paint);
+                canvas.drawText(Float.toString(thread.radii[i+6]),i*endX/6,endY*(1-1/(float)8),paint);
+            }
+
+            paint.setStrokeWidth(12);
+            paint.setColor(Color.parseColor("#ff0000"));
+            canvas.drawLines(makePerimeter(canvas,thread.radii),paint);
+            paint.setStrokeWidth(3);
+            paint.setColor(Color.parseColor("#00ff00"));
+
 
         }
         @Override
@@ -165,7 +170,7 @@ public class StartDetect extends Activity {
             private SurfaceHolder surfaceHolder; //underlying canvas for next frame
             private Radial mainView;
             private volatile boolean run = false;
-            float[] radii = new float[6];
+            float[] radii = new float[12];
 
 
             //constructor
@@ -201,6 +206,7 @@ public class StartDetect extends Activity {
                         if(DeviceDetect.isConnected()) tmp = sensor.getData();
                         for(int i = 0;i < 6; ++i){
                             if(tmp[i]!=0) radii[i] = tmp[i];
+                            radii[i+6] = tmp[i+6];
                         }
                     }catch (Exception e1){
                         setRunning(false);
@@ -228,7 +234,24 @@ public class StartDetect extends Activity {
 
     }
 
+    public float[] makePerimeter(Canvas canvas, float[] radii){
+           float angle=0;
+           int numPts=240;
+           float numPtsf = 240;
+           float two = 2;
+           float[] perimeter = new float[numPts];
+           int j = 0;
+           for(int i=0; i< numPts; ++i){
+                  j = numPts %60;
+                  angle = (float)Math.PI*(i/numPtsf);
+                  perimeter[i]   = ((canvas.getWidth()/two))*
+                           (FloatMath.cos(angle))*radii[2] + canvas.getWidth()/two;
+                  perimeter[++i] = ((canvas.getHeight())/two)* FloatMath.sin(angle)*radii[2];
+            }
 
+           return perimeter;
+
+    }
 
     public float[] makeArc(Canvas canvas, float rad_div){
         int numPts =200;
@@ -237,7 +260,8 @@ public class StartDetect extends Activity {
             float angle;
             float numPtsf = (float) numPts;
             angle = (float)Math.PI*(i/numPtsf);
-            arcArray[i]   = (canvas.getWidth()/rad_div)*(FloatMath.cos(angle)) + canvas.getWidth()/2;
+            arcArray[i]   = (canvas.getWidth()/rad_div)*
+                   (FloatMath.cos(angle)) + canvas.getWidth()/2;
             arcArray[++i] = (canvas.getHeight()/rad_div)* FloatMath.sin(angle);
             //Log.v(gtag, arcArray[i-1] + " " + arcArray[i]);
         }
