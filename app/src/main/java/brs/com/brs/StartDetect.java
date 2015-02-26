@@ -3,7 +3,6 @@
         import android.app.Activity;
         import android.content.Context;
         import android.content.Intent;
-        import android.graphics.RectF;
         import android.os.Bundle;
         import android.util.FloatMath;
         import android.util.Log;
@@ -19,6 +18,7 @@
         import android.graphics.drawable.BitmapDrawable;
         import android.os.Bundle;
         import android.view.Menu;
+        import android.view.WindowManager;
         import android.widget.Button;
         import android.widget.LinearLayout;
 
@@ -44,6 +44,8 @@ public class StartDetect extends Activity {
             Sensor sensor = new Sensor(DeviceDetect.getPort());
             Radial radial = new Radial(this, sensor);
             setContentView(radial);
+            getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
+
         }else{
             Intent intent = new Intent(StartDetect.this,MainActivity.class);
             startActivity(intent);
@@ -110,22 +112,23 @@ public class StartDetect extends Activity {
             canvas.drawBitmap(bgr,maxW,maxH,paint);
 
             canvas.drawColor(Color.BLACK); // clears screen
+
+            //float six = 6;
+            paint.setStrokeWidth(12);
+            for(int i =0;i<6; ++i){
+                //canvas.drawCircle(i*endX/6,(1+thread.radii[i])*endY/(float)2,maxW/15,paint);
+                int intensity =  Math.round(255*(1-thread.radii[i]));
+                paint.setARGB(intensity, intensity, 100, 0);
+                canvas.drawLines(makePerimeter(canvas,thread.radii,i),paint);
+                canvas.drawText(Float.toString(thread.radii[i+6]),i*endX/6,endY*(1-1/(float)8),paint);
+            }
+            paint.setStrokeWidth(3);
+            paint.setColor(Color.parseColor("#ffffff"));
+
             canvas.drawLines(makeArc(canvas,2),paint);
             canvas.drawLines(makeArc(canvas,3), paint);
             canvas.drawLines(makeArc(canvas,4),paint);
             makeSectors(canvas,paint);
-
-            //float six = 6;
-            for(int i =0;i<6; ++i){
-                //canvas.drawCircle(i*endX/6,(1+thread.radii[i])*endY/(float)2,maxW/15,paint);
-                canvas.drawText(Float.toString(thread.radii[i+6]),i*endX/6,endY*(1-1/(float)8),paint);
-            }
-
-            paint.setStrokeWidth(12);
-            paint.setColor(Color.parseColor("#ff0000"));
-            canvas.drawLines(makePerimeter(canvas,thread.radii),paint);
-            paint.setStrokeWidth(3);
-            paint.setColor(Color.parseColor("#00ff00"));
 
 
         }
@@ -234,19 +237,20 @@ public class StartDetect extends Activity {
 
     }
 
-    public float[] makePerimeter(Canvas canvas, float[] radii){
-           float angle=0;
+    public float[] makePerimeter(Canvas canvas, float[] radii,int init){
+           float thirty= (float)Math.PI/6;
+           float init_angle = init*thirty;
            int numPts=240;
            float numPtsf = 240;
            float two = 2;
-           float[] perimeter = new float[numPts];
-           int j = 0;
+           float[] perimeter = new float[4*numPts];
            for(int i=0; i< numPts; ++i){
-                  j = numPts %60;
-                  angle = (float)Math.PI*(i/numPtsf);
-                  perimeter[i]   = ((canvas.getWidth()/two))*
-                           (FloatMath.cos(angle))*radii[2] + canvas.getWidth()/two;
-                  perimeter[++i] = ((canvas.getHeight())/two)* FloatMath.sin(angle)*radii[2];
+                  float angle = thirty*(i/numPtsf) + init_angle;
+                  perimeter[i]   = canvas.getWidth()/two;
+                  perimeter[++i] = 0;
+                  perimeter[++i]   = ((canvas.getWidth()/two))*
+                           (FloatMath.cos(angle))*radii[init] + canvas.getWidth()/two;
+                  perimeter[++i] = ((canvas.getHeight())/two)* FloatMath.sin(angle)*radii[init];
             }
 
            return perimeter;
@@ -255,7 +259,7 @@ public class StartDetect extends Activity {
 
     public float[] makeArc(Canvas canvas, float rad_div){
         int numPts =200;
-        float[] arcArray = new float[numPts];
+        float[] arcArray = new float[2*numPts];
         for(int i=0;i<numPts; ++i){
             float angle;
             float numPtsf = (float) numPts;
