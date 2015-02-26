@@ -11,7 +11,7 @@ Actions to keep doing:
     -What is working well is our current scrum meetings. Having the time set, allows for all to plan so they can make it.
 
 Work completed/not completed:
-  Completed-
+  Completed--
       User Story 1 “As a user I want a graphical display that readily shows and warns of dangers around me”
 	      note: data being displayed, missing some tasks
       User Story 2 “As a developer/user I want only accurate data to be send to android application”
@@ -20,7 +20,7 @@ Work completed/not completed:
       User Story 3 “As a user want a safe data connection be to sent so the application doesn’t unexpectedly close”
       User Story 5“ As a user I want an app that lets me select what is displayed to me and when to alert me of incoming objects”
 
-  Not Completed-
+  Not Completed--
      User Story 1 “As a user I want a graphical display that readily shows and warns of dangers around me”
 	      note: missing function to light the wedge that object in currently in 
 	
