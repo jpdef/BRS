@@ -122,8 +122,10 @@ public class StartDetect extends Activity {
                 canvas.drawLines(makePerimeter(canvas,thread.radii,i),paint);
                 canvas.drawText(Float.toString(thread.radii[i+6]),i*endX/6,endY*(1-1/(float)8),paint);
             }
+
             paint.setStrokeWidth(3);
             paint.setColor(Color.parseColor("#ffffff"));
+            canvas.drawText(Long.toString(thread.drop_count),endX/2, endY*(1-2/(float)8),paint);
 
             canvas.drawLines(makeArc(canvas,2),paint);
             canvas.drawLines(makeArc(canvas,3), paint);
@@ -174,6 +176,7 @@ public class StartDetect extends Activity {
             private Radial mainView;
             private volatile boolean run = false;
             float[] radii = new float[12];
+            long drop_count =0;
 
 
             //constructor
@@ -206,11 +209,16 @@ public class StartDetect extends Activity {
                     try {
                         paint.setColor(Color.parseColor("#00ff00"));
                         float[] tmp = {0,0,0,0,0,0};
+                        int k = 0;
                         if(DeviceDetect.isConnected()) tmp = sensor.getData();
                         for(int i = 0;i < 6; ++i){
-                            if(tmp[i]!=0) radii[i] = tmp[i];
+                            if(tmp[i]!=0) {
+                                radii[i] = tmp[i];
+                                ++k;
+                            }
                             radii[i+6] = tmp[i+6];
                         }
+                        drop_count += (4-k);
                     }catch (Exception e1){
                         setRunning(false);
                         paint.setColor(Color.parseColor("#ff0000"));

@@ -10,8 +10,8 @@ import com.hoho.android.usbserial.util.HexDump;
  */
 public class Sensor {
     UsbSerialPort port;
-    int readtime =500;
-    int writetime=500;
+    int readtime =100;
+    int writetime=100;
     IOException no_write;
     IOException no_read ;
 
@@ -83,12 +83,13 @@ public class Sensor {
 *              -IO exception no_read
 */
     protected byte[] readPort() throws IOException{
-        byte buffer_in[] = new byte[32];
+        byte buffer_in[] = new byte[16];
         try {
             int numBytesRead = port.read(buffer_in, readtime);
             if(numBytesRead >0){
                 return buffer_in;
             }
+            port.purgeHwBuffers(true,false);
         } catch (IOException e6) {
             //failure_message("Couldn't Read/Write");
             try {
