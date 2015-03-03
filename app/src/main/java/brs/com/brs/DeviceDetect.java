@@ -82,7 +82,14 @@ public class DeviceDetect{
            throw no_connect;
         }
     }
+    public static void disconnectDevice() throws Exception {
+        try{
+            mPort.close();
+        }catch(IOException e1){
+            throw no_connect;
+        }
 
+    }
 
 
 

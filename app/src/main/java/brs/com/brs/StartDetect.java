@@ -79,7 +79,7 @@ public class StartDetect extends Activity {
     }
 
     public class Radial extends SurfaceView implements SurfaceHolder.Callback{
-        radialThread thread;
+        radialThread radialthread;
         Bitmap bgr;
         Paint paint;
         int maxH; int maxW;
@@ -116,16 +116,15 @@ public class StartDetect extends Activity {
             //float six = 6;
             paint.setStrokeWidth(12);
             for(int i =0;i<6; ++i){
-                //canvas.drawCircle(i*endX/6,(1+thread.radii[i])*endY/(float)2,maxW/15,paint);
-                int intensity =  Math.round(255*(1-thread.radii[i]));
-                paint.setARGB(intensity, intensity, 100, 0);
-                canvas.drawLines(makePerimeter(canvas,thread.radii,i),paint);
-                canvas.drawText(Float.toString(thread.radii[i+6]),i*endX/6,endY*(1-1/(float)8),paint);
+                int intensity =  Math.round(255*(1-radialthread.radii[i]));
+                paint.setARGB(intensity, intensity, 50, 0);
+                canvas.drawLines(makePerimeter(canvas,radialthread.radii,i),paint);
+                canvas.drawText(Float.toString(radialthread.radii[i+6]),i*endX/6,endY*(1-1/(float)8),paint);
             }
 
             paint.setStrokeWidth(3);
             paint.setColor(Color.parseColor("#ffffff"));
-            canvas.drawText(Long.toString(thread.drop_count),endX/2, endY*(1-2/(float)8),paint);
+            canvas.drawText(Long.toString(radialthread.drop_count),endX/2, endY*(1-2/(float)8),paint);
 
             canvas.drawLines(makeArc(canvas,2),paint);
             canvas.drawLines(makeArc(canvas,3), paint);
@@ -141,9 +140,16 @@ public class StartDetect extends Activity {
         public void surfaceCreated(SurfaceHolder holder) {
             try {
                 if(DeviceDetect.isConnected()) sensor.writePort(sensor.sig_start);
-                thread = new radialThread(getHolder(),this);
-                thread.setRunning(true);
-                thread.start();
+
+                sensor.sensorthread.setRunning(true);
+                sensor.sensorthread.start();
+
+                radialthread = new radialThread(getHolder(),this);
+                radialthread.setRunning(true);
+                radialthread.start();
+
+
+
             }catch(IOException e){
                 Intent intent = new Intent(StartDetect.this,MainActivity.class);
                 startActivity(intent);
@@ -155,11 +161,13 @@ public class StartDetect extends Activity {
         public void surfaceDestroyed(SurfaceHolder holder) {
             Log.v(gtag, "DESTROY");
             //sensor.stopArdiuno();
-            thread.setRunning(false);
+            sensor.sensorthread.setRunning(false);
+            radialthread.setRunning(false);
             boolean retry = true;
             while(retry){
                 try{
-                    thread.join();
+                    sensor.sensorthread.join();
+                    radialthread.join();
                     retry =false;
 
                 }catch(InterruptedException e){
@@ -200,7 +208,7 @@ public class StartDetect extends Activity {
                 while(run){
                     c=null;
                     try{
-                        Thread.sleep(100);
+                        Thread.sleep(10);
                     }catch (InterruptedException e){
 
 
@@ -208,17 +216,20 @@ public class StartDetect extends Activity {
 
                     try {
                         paint.setColor(Color.parseColor("#00ff00"));
-                        float[] tmp = {0,0,0,0,0,0};
-                        int k = 0;
-                        if(DeviceDetect.isConnected()) tmp = sensor.getData();
-                        for(int i = 0;i < 6; ++i){
-                            if(tmp[i]!=0) {
-                                radii[i] = tmp[i];
-                                ++k;
+                        if(!sensor.fifo.isEmpty()) {
+                            float[] tmp = sensor.fifo.remove(0);
+                            for(int i =0; i <6 ; ++i) {
+                                if (tmp[i] != 0) radii[i] = tmp[i];
+                                radii[i+6] = tmp[i+6];
                             }
-                            radii[i+6] = tmp[i+6];
+                        }else{
+                            for(int i =0; i <6 ; ++i) {
+                                if (i == 5) radii[i] = 1;
+                            }
+
                         }
-                        drop_count += (4-k);
+
+                        //get data here
                     }catch (Exception e1){
                         setRunning(false);
                         paint.setColor(Color.parseColor("#ff0000"));

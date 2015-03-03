@@ -1,7 +1,10 @@
 package brs.com.brs;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Queue;
+
 import com.hoho.android.usbserial.driver.UsbSerialPort;
 import com.hoho.android.usbserial.util.HexDump;
 
@@ -10,6 +13,7 @@ import com.hoho.android.usbserial.util.HexDump;
  */
 public class Sensor {
     UsbSerialPort port;
+    sensorThread sensorthread;
     int readtime =100;
     int writetime=100;
     IOException no_write;
@@ -21,9 +25,16 @@ public class Sensor {
     public final byte sig_kill  =  (byte) 0xEE;
     public final byte s1        =  (byte) 0xFE;
 
+    /* FIFO */
+    List<float[]> fifo;
+
     public Sensor(UsbSerialPort port){
        this.port =port;
+        fifo = new ArrayList<float[]>();
+        sensorthread = new sensorThread(this);
+
     }
+
 
     /* getData()
     *
@@ -126,5 +137,48 @@ public class Sensor {
 
     }
 
+
+    class sensorThread extends Thread {
+        volatile boolean run;
+        Sensor sensor;
+
+
+        //constructor
+        public sensorThread(Sensor sensor){
+           this.sensor=sensor;
+        }
+
+        //on/off
+        public void setRunning(boolean run){
+            this.run = run;
+        }
+
+        @Override
+        public void run(){
+            while(run){
+                //catch interupts
+                try{
+                    Thread.sleep(100);
+                }catch (InterruptedException e){
+
+
+                }
+
+                try {
+                    float[] tmp = {0,0,0,0,0,0};
+                    if (DeviceDetect.isConnected()) {
+                        tmp = sensor.getData();
+                        sensor.fifo.add(tmp);
+                    }
+
+
+                }catch (Exception e){
+                    //do something
+                }
+
+
+            }
+        }
+    }
 
 }

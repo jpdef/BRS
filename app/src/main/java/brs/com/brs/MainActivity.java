@@ -63,6 +63,16 @@ public class MainActivity extends Activity {
     }
 
     @Override
+    protected void onDestroy(){
+        try {
+            DeviceDetect.disconnectDevice();
+        }catch (Exception no_connect){
+            createToast("Internal error");
+        }
+    }
+
+
+    @Override
     protected void onResume(){
         super.onResume();
         //Preferences for saved data
