@@ -58,7 +58,7 @@ public class MainActivity extends Activity {
 
         //set current theme
         if(themeSetting==1){
-            layout1.setBackgroundResource(R.drawable.background_main_light);
+            layout1.setBackgroundResource(R.drawable.background_main_light_2);
         }
     }
 
@@ -72,10 +72,10 @@ public class MainActivity extends Activity {
         LinearLayout layout1 = (LinearLayout) findViewById(R.id.main_layout);
         themeSetting = myPrefs.getInt("theme", 0);
         if(themeSetting==1){
-            layout1.setBackgroundResource(R.drawable.background_main_light);
+            layout1.setBackgroundResource(R.drawable.background_main_light_2);
         }
         else{
-            layout1.setBackgroundResource(R.drawable.background_main_dark);
+            layout1.setBackgroundResource(R.drawable.background_main_dark_2);
         }
     }
 /*
