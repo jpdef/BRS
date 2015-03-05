@@ -51,7 +51,7 @@ public class MainActivity extends Activity {
 
 
 
-        alertSetting = myPrefs.getInt("alert", 0);
+        alertSetting = myPrefs.getInt("alert", 1);
 
 
         themeSetting = myPrefs.getInt("theme", 0);
