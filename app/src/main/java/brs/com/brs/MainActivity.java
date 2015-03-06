@@ -78,6 +78,8 @@ public class MainActivity extends Activity {
             layout1.setBackgroundResource(R.drawable.background_main_dark_2);
         }
     }
+
+
 /*
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -118,9 +120,12 @@ public class MainActivity extends Activity {
     }
 
     public void start(View view){
+       // createToast("3");
         if(DeviceDetect.isConnected()){
+           createToast("1");
             Intent intent = new Intent(this,StartDetect.class);
             startActivity(intent);
+           // createToast("2");
         }else{
             createToast("Not Connected");
         }

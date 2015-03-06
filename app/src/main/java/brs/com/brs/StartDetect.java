@@ -52,6 +52,7 @@ public class StartDetect extends Activity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        
         if(DeviceDetect.isConnected()) {
             Sensor sensor = new Sensor(DeviceDetect.getPort());
             Radial radial = new Radial(this, sensor);
