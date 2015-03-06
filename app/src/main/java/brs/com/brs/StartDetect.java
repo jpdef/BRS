@@ -49,6 +49,7 @@ public class StartDetect extends Activity {
         }else{
             Intent intent = new Intent(StartDetect.this,MainActivity.class);
             startActivity(intent);
+
         }
 
 
