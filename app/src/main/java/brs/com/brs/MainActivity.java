@@ -131,7 +131,6 @@ public class MainActivity extends Activity {
         if(DeviceDetect.isConnected()){
             Intent intent = new Intent(this,StartDetect.class);
             startActivity(intent);
-            finish();
 
         }else{
             createToast("Not Connected");
