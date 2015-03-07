@@ -161,7 +161,11 @@ public class Sensor {
                     Thread.sleep(100);
                 }catch (InterruptedException e){
 
-
+                    try {
+                        port.close();
+                    } catch (IOException e1) {
+                        e1.printStackTrace();
+                    }
                 }
 
                 try {

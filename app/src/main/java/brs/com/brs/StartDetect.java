@@ -45,10 +45,9 @@ public class StartDetect extends Activity {
     float[] sensor_data;
     int proximitySetting;
     int alertSetting;
+    int alertFlag = 0;
+
     float prox;
-    DisplayMetrics display = this.getResources().getDisplayMetrics();
-    int screenWidth = display.widthPixels;
-    int screenHeight = display.heightPixels;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -95,8 +94,6 @@ public class StartDetect extends Activity {
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        //radial.surfaceDestroyed(radial.getHolder());
-
 
 
     }
@@ -154,7 +151,9 @@ public class StartDetect extends Activity {
             canvas.drawLines(makeArc(canvas,4),paint);
 //IF auto alert is set to on, then execute autoAlert() function to test when there is danger
             if(alertSetting==1) {
-                autoAlert(thread.radii, canvas);
+                autoAlert(radialthread.radii, canvas);
+                int alertFlag = 0;
+
             }
 
             makeSectors(canvas,paint);
@@ -344,17 +343,15 @@ public class StartDetect extends Activity {
 //for now, it SHOULD leave the screen red as long as there is something within
 //the proximity.
     public void autoAlert(float[] rad, Canvas can){
-        int alertFlag = 0;
         for(int i = 0; i < rad.length; i++){
-            float dist = rad[i];
-            if(dist <= prox) alertFlag = 1;
+            if(rad[i] <= prox && rad[i]>0) alertFlag = 1;
         }
 
         if(alertFlag == 1) {
             Paint paint = new Paint();
             paint.setStrokeWidth(3);
             paint.setColor(Color.parseColor("#FF0000"));
-            Rect rectangle = new Rect(0,0,screenWidth, screenHeight);
+            Rect rectangle = new Rect(0,0,can.getWidth(), can.getHeight());
             can.drawRect(rectangle,paint);
 
         }
