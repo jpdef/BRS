@@ -39,7 +39,7 @@ void print_data(){
 }
 
 /*checks distance every 2ms, updates inches array*/
-//attempt gathering velocity data here- note: extra code here not ideal
+//attempted gathering velocity data here- note: extra code here not ideal
 void echoCheck() {   
     if (sonar[currentSensor].check_timer()){
          inches[currentSensor] = sonar[currentSensor].ping_result / US_ROUNDTRIP_IN; //note: .ping_result returns time a for roundtrip
