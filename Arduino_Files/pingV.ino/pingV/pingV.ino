@@ -29,8 +29,9 @@ void print_data(){
             Serial.print("distance = ");
             Serial.print(inches[i]);
             Serial.println();
-            Serial.print("change Distance =  ");
-            Serial.print(prev_inches[i]);
+            Serial.print("velocity =  ");
+            Serial.print(V[i]);
+            //Serial.print(prev_time[i]);
             Serial.println();
           }
         }
@@ -41,11 +42,7 @@ void print_data(){
 //attempt gathering velocity data here- note: extra code here not ideal
 void echoCheck() {   
     if (sonar[currentSensor].check_timer()){
-         prev_inches[currentSensor] = inches[currentSensor]; //<- lasted edit not copying any value
          inches[currentSensor] = sonar[currentSensor].ping_result / US_ROUNDTRIP_IN; //note: .ping_result returns time a for roundtrip
-         prev_time[currentSensor] = prev_inches[currentSensor] *  US_ROUNDTRIP_IN * .5; //time previous waited for ping
-         time = ((SONAR_NUM * PING_INTERVAL) + (inches[currentSensor] * US_ROUNDTRIP_IN * .5) - prev_time[currentSensor]); //need to account for different ping triggers
-         V[currentSensor] = (inches[currentSensor] - prev_inches[currentSensor] / (time));
     }
 }
 
@@ -115,6 +112,11 @@ void loop(){
                    print_data();
               }   
               sonar[currentSensor].timer_stop();                           //disables iterrupts in case was still running
+              prev_inches[currentSensor] = inches[currentSensor];
+              prev_time[currentSensor] = prev_inches[currentSensor] *  US_ROUNDTRIP_IN * .5; //time previous waited for ping
+              time = ((((SONAR_NUM * PING_INTERVAL)) + (inches[currentSensor] * US_ROUNDTRIP_IN * .5)) - prev_time[currentSensor]); //need to account for different ping triggers
+              V[currentSensor] = abs((inches[currentSensor] - prev_inches[currentSensor]) / (time));
+              
               currentSensor=i;                                             //update sensor working with
               inches[currentSensor] = 0;                                   //reintialize distance to 0
               sonar[currentSensor].ping_timer(echoCheck);                  //sets interrupt and check frequency 
