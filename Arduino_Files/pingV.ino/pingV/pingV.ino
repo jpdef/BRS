@@ -38,9 +38,10 @@ void print_data(){
 }
 
 /*checks distance every 2ms, updates inches array*/
+//attempt gathering velocity data here- note: extra code here not ideal
 void echoCheck() {   
     if (sonar[currentSensor].check_timer()){
-         prev_inches[currentSensor] = inches[currentSensor];
+         prev_inches[currentSensor] = inches[currentSensor]; //<- lasted edit not copying any value
          inches[currentSensor] = sonar[currentSensor].ping_result / US_ROUNDTRIP_IN; //note: .ping_result returns time a for roundtrip
          prev_time[currentSensor] = prev_inches[currentSensor] *  US_ROUNDTRIP_IN * .5; //time previous waited for ping
          time = ((SONAR_NUM * PING_INTERVAL) + (inches[currentSensor] * US_ROUNDTRIP_IN * .5) - prev_time[currentSensor]); //need to account for different ping triggers
