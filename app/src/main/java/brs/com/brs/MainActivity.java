@@ -138,6 +138,13 @@ public class MainActivity extends Activity {
         }
 
     }
+
+    @Override
+    public void onBackPressed() {
+
+    }
+
+
     //method to create a toast message
     public void createToast(String message){
         Context context = getApplicationContext();
