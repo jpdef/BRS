@@ -3,9 +3,15 @@
         import android.app.Activity;
         import android.content.Context;
         import android.content.Intent;
+        import android.content.SharedPreferences;
+        import android.graphics.Point;
+        import android.graphics.Rect;
+        import android.graphics.RectF;
         import android.os.Bundle;
+        import android.util.DisplayMetrics;
         import android.util.FloatMath;
         import android.util.Log;
+        import android.view.Display;
         import android.view.Surface;
         import android.view.SurfaceHolder;
         import android.view.SurfaceView;
@@ -37,9 +43,15 @@ public class StartDetect extends Activity {
     String gtag = new String("graphics:");
     Sensor sensor;
     float[] sensor_data;
+    int proximitySetting;
+    int alertSetting;
+    int alertFlag = 0;
+
+    float prox;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        
         if(DeviceDetect.isConnected()) {
             Sensor sensor = new Sensor(DeviceDetect.getPort());
             Radial radial = new Radial(this, sensor);
@@ -51,6 +63,15 @@ public class StartDetect extends Activity {
             startActivity(intent);
 
         }
+        //Preferences for saved data
+        @SuppressWarnings("deprecation")
+        final SharedPreferences myPrefs = this.getSharedPreferences(
+                "myPrefs", MODE_WORLD_READABLE);
+        final SharedPreferences.Editor editor= myPrefs.edit();
+        proximitySetting = myPrefs.getInt("proximity", 0);
+        prox = (float)proximitySetting/10;
+        alertSetting = myPrefs.getInt("alert", 1);
+
 
 
     }
@@ -73,8 +94,6 @@ public class StartDetect extends Activity {
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        //radial.surfaceDestroyed(radial.getHolder());
-
 
 
     }
@@ -130,6 +149,13 @@ public class StartDetect extends Activity {
             canvas.drawLines(makeArc(canvas,2),paint);
             canvas.drawLines(makeArc(canvas,3), paint);
             canvas.drawLines(makeArc(canvas,4),paint);
+//IF auto alert is set to on, then execute autoAlert() function to test when there is danger
+            if(alertSetting==1) {
+                autoAlert(radialthread.radii, canvas);
+                int alertFlag = 0;
+
+            }
+
             makeSectors(canvas,paint);
 
 
@@ -312,6 +338,25 @@ public class StartDetect extends Activity {
 
     }
 
+//takes in radii and canvas, when it detects something within proximity,
+//it will turn the screen red.
+//for now, it SHOULD leave the screen red as long as there is something within
+//the proximity.
+    public void autoAlert(float[] rad, Canvas can){
+        for(int i = 0; i < rad.length; i++){
+            if(rad[i] <= prox && rad[i]>0) alertFlag = 1;
+        }
 
+        if(alertFlag == 1) {
+            Paint paint = new Paint();
+            paint.setStrokeWidth(3);
+            paint.setColor(Color.parseColor("#FF0000"));
+            Rect rectangle = new Rect(0,0,can.getWidth(), can.getHeight());
+            can.drawRect(rectangle,paint);
+
+        }
+
+
+    }
 
 }

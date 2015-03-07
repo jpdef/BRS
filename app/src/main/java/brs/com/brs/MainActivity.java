@@ -47,18 +47,18 @@ public class MainActivity extends Activity {
                 "myPrefs", MODE_WORLD_READABLE);
 
 
-        proximitySetting = myPrefs.getInt("proximity", 0);
+        proximitySetting = myPrefs.getInt("proximity", 1);
 
 
 
-        alertSetting = myPrefs.getInt("alert", 0);
+        alertSetting = myPrefs.getInt("alert", 1);
 
 
         themeSetting = myPrefs.getInt("theme", 0);
 
         //set current theme
         if(themeSetting==1){
-            layout1.setBackgroundResource(R.drawable.background_main_light);
+            layout1.setBackgroundResource(R.drawable.background_main_light_2);
         }
     }
 
@@ -82,12 +82,14 @@ public class MainActivity extends Activity {
         LinearLayout layout1 = (LinearLayout) findViewById(R.id.main_layout);
         themeSetting = myPrefs.getInt("theme", 0);
         if(themeSetting==1){
-            layout1.setBackgroundResource(R.drawable.background_main_light);
+            layout1.setBackgroundResource(R.drawable.background_main_light_2);
         }
         else{
-            layout1.setBackgroundResource(R.drawable.background_main_dark);
+            layout1.setBackgroundResource(R.drawable.background_main_dark_2);
         }
     }
+
+
 /*
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -131,8 +133,6 @@ public class MainActivity extends Activity {
         if(DeviceDetect.isConnected()){
             Intent intent = new Intent(this,StartDetect.class);
             startActivity(intent);
-            finish();
-
         }else{
             createToast("Not Connected");
         }

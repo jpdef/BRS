@@ -33,7 +33,7 @@ public class Settings extends Activity {
         final SharedPreferences.Editor editor= myPrefs.edit();
         proximitySetting = myPrefs.getInt("proximity", 0);
 
-        alertSetting = myPrefs.getInt("alert", 0);
+        alertSetting = myPrefs.getInt("alert", 1);
 
         themeSetting = myPrefs.getInt("theme", 0);
 
