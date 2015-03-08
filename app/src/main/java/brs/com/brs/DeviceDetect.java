@@ -49,10 +49,13 @@ public class DeviceDetect{
     }
 
     public static boolean isConnected(){
-        if (mPort == null || mUsbManager.getDeviceList().isEmpty()) {
+        if (mPort == null ) {
             return false;
+        }else if(mUsbManager.openDevice(mPort.getDriver().getDevice()) == null){
+            return false;
+        }else {
+            return true;
         }
-        return true;
     }
 
     public static UsbSerialPort getPort(){

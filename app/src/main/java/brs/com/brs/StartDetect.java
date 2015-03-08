@@ -86,7 +86,6 @@ public class StartDetect extends Activity {
     @Override
     protected void onStop() {
         super.onStop();
-        //sensor.stopArdiuno();
 
 
     }
@@ -137,7 +136,11 @@ public class StartDetect extends Activity {
             paint.setStrokeWidth(12);
             for(int i =0;i<6; ++i){
                 int intensity =  Math.round(255*(1-radialthread.radii[i]));
-                paint.setARGB(intensity, intensity, 50, 0);
+                if(radialthread.radii[i] > 1 ){
+                    paint.setARGB(100,0,255,0);
+                }else{
+                    paint.setARGB(intensity, intensity, 50, 0);
+                }
                 canvas.drawLines(makePerimeter(canvas,radialthread.radii,i),paint);
                 canvas.drawText(Float.toString(radialthread.radii[i+6]),i*endX/6,endY*(1-1/(float)8),paint);
             }
@@ -151,9 +154,8 @@ public class StartDetect extends Activity {
             canvas.drawLines(makeArc(canvas,4),paint);
 //IF auto alert is set to on, then execute autoAlert() function to test when there is danger
             if(alertSetting==1) {
-                autoAlert(radialthread.radii, canvas);
                 int alertFlag = 0;
-
+                autoAlert(radialthread.radii, canvas,paint);
             }
 
             makeSectors(canvas,paint);
@@ -201,7 +203,11 @@ public class StartDetect extends Activity {
 
                 }
             }
-
+            try {
+                //DeviceDetect.disconnectDevice();
+            }catch (Exception e2){
+                //do something
+            }
         }
         /*
         *   Thread updates frames for canvas
@@ -342,13 +348,12 @@ public class StartDetect extends Activity {
 //it will turn the screen red.
 //for now, it SHOULD leave the screen red as long as there is something within
 //the proximity.
-    public void autoAlert(float[] rad, Canvas can){
+    public void autoAlert(float[] rad, Canvas can, Paint paint){
         for(int i = 0; i < rad.length; i++){
             if(rad[i] <= prox && rad[i]>0) alertFlag = 1;
         }
 
         if(alertFlag == 1) {
-            Paint paint = new Paint();
             paint.setStrokeWidth(3);
             paint.setColor(Color.parseColor("#FF0000"));
             Rect rectangle = new Rect(0,0,can.getWidth(), can.getHeight());

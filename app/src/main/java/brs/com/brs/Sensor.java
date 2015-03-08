@@ -177,7 +177,7 @@ public class Sensor {
 
 
                 }catch (Exception e){
-                    //do something
+                    this.setRunning(false);
                 }
 
 

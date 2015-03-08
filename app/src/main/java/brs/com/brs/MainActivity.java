@@ -75,6 +75,15 @@ public class MainActivity extends Activity {
     @Override
     protected void onResume(){
         super.onResume();
+
+        DeviceDetect.intializeSerial(this);
+        try{
+            DeviceDetect.connectToDevice();
+        }catch(Exception e){
+            createToast("Not Connected");
+        }
+
+
         //Preferences for saved data
         @SuppressWarnings("deprecation")
         final SharedPreferences myPrefs = this.getSharedPreferences(
@@ -141,7 +150,7 @@ public class MainActivity extends Activity {
 
     @Override
     public void onBackPressed() {
-
+           //fixes button error
     }
 
 
