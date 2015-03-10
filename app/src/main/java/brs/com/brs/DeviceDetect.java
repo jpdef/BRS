@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.hardware.usb.UsbAccessory;
 import android.hardware.usb.UsbDeviceConnection;
 import android.hardware.usb.UsbManager;
+import android.os.Environment;
 import android.os.SystemClock;
 import android.support.annotation.NonNull;
 import android.support.v7.app.ActionBarActivity;
@@ -16,6 +17,7 @@ import android.os.Message;
 import android.widget.TextView;
 
 import java.io.ByteArrayInputStream;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InterruptedIOException;
 import java.util.Collection;
@@ -25,8 +27,9 @@ import com.hoho.android.usbserial.driver.UsbSerialProber;
 import com.hoho.android.usbserial.driver.UsbSerialDriver;
 import com.hoho.android.usbserial.driver.UsbSerialPort;
 import com.hoho.android.usbserial.util.HexDump;
-import java.util.Queue;
-
+import java.io.FileWriter;
+import java.io.BufferedWriter;
+import java.io.File;
 /**
  * Created by jake on 1/17/15.
  */
@@ -39,6 +42,11 @@ public class DeviceDetect{
     private static UsbDeviceConnection mConnection;
 
     public static Exception no_connect;
+
+    //Debug VARs
+    public static File debugFile;
+    public static BufferedWriter debugger;
+
 
 
     /*-----------MAIN  FN'S--------------*/
@@ -94,7 +102,30 @@ public class DeviceDetect{
 
     }
 
+    public static void intializeDebug(){
+        String root = Environment.getExternalStorageDirectory().toString();
+        File myDir = new File(root + "/BRS");
+        myDir.mkdirs();
+        String fname = "BRS.log";
+        debugFile =new File(myDir,fname);
+        try {
+            debugger = new BufferedWriter(new FileWriter(debugFile));
+        }catch (IOException e_1){
+            //do somethign
+        }
 
+    }
+
+
+    public static void debug(String message) {
+        try {
+           debugger.write(message);
+           debugger.close();
+        }catch (IOException e){
+            //do nothing
+        }
+
+    }
 
 
     }

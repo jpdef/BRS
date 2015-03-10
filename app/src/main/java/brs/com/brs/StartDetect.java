@@ -4,9 +4,12 @@
         import android.content.Context;
         import android.content.Intent;
         import android.content.SharedPreferences;
+        import android.graphics.LinearGradient;
         import android.graphics.Point;
+        import android.graphics.RadialGradient;
         import android.graphics.Rect;
         import android.graphics.RectF;
+        import android.graphics.Shader;
         import android.os.Bundle;
         import android.util.DisplayMetrics;
         import android.util.FloatMath;
@@ -46,7 +49,6 @@ public class StartDetect extends Activity {
     int proximitySetting;
     int alertSetting;
     int alertFlag = 0;
-
     float prox;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -152,7 +154,7 @@ public class StartDetect extends Activity {
             canvas.drawLines(makeArc(canvas,2),paint);
             canvas.drawLines(makeArc(canvas,3), paint);
             canvas.drawLines(makeArc(canvas,4),paint);
-//IF auto alert is set to on, then execute autoAlert() function to test when there is danger
+
             if(alertSetting==1) {
                 int alertFlag = 0;
                 autoAlert(radialthread.radii, canvas,paint);
@@ -238,6 +240,7 @@ public class StartDetect extends Activity {
             @Override
             public void run(){
                 Canvas c;
+
                 while(run){
                     c=null;
                     try{
@@ -254,6 +257,7 @@ public class StartDetect extends Activity {
                             for(int i =0; i <6 ; ++i) {
                                 if (tmp[i] != 0) radii[i] = tmp[i];
                                 radii[i+6] = tmp[i+6];
+                                //radii[7] = sensor.fifo.size();
                             }
                         }else{
                             for(int i =0; i <6 ; ++i) {
@@ -354,9 +358,8 @@ public class StartDetect extends Activity {
         }
 
         if(alertFlag == 1) {
-            paint.setStrokeWidth(3);
-            paint.setColor(Color.parseColor("#FF0000"));
-            Rect rectangle = new Rect(0,0,can.getWidth(), can.getHeight());
+            paint.setARGB(100,255,0,0);
+            RectF rectangle = new RectF(0,0,can.getWidth(), can.getHeight());
             can.drawRect(rectangle,paint);
 
         }

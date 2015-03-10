@@ -31,6 +31,8 @@ public class MainActivity extends Activity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        DeviceDetect.intializeDebug();
+        DeviceDetect.debug("find me if you cant");
         setContentView(R.layout.activity_main);
         DeviceDetect.intializeSerial(this);
         try{
