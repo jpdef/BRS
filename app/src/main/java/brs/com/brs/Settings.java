@@ -25,9 +25,7 @@ public class Settings extends Activity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.settings);
-
-        //Preferences for saved data
-        @SuppressWarnings("deprecation")
+        DeviceDetect.debug("Settings: onCreate");
         final SharedPreferences myPrefs = this.getSharedPreferences(
                 "myPrefs", MODE_WORLD_READABLE);
         final SharedPreferences.Editor editor= myPrefs.edit();

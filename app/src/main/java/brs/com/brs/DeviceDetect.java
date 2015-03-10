@@ -45,7 +45,7 @@ public class DeviceDetect{
 
     //Debug VARs
     public static File debugFile;
-    public static BufferedWriter debugger;
+    public static FileOutputStream debugger;
 
 
 
@@ -103,23 +103,21 @@ public class DeviceDetect{
     }
 
     public static void intializeDebug(){
-        String root = Environment.getExternalStorageDirectory().toString();
-        File myDir = new File(root + "/BRS");
-        myDir.mkdirs();
-        String fname = "BRS.log";
-        debugFile =new File(myDir,fname);
-        try {
-            debugger = new BufferedWriter(new FileWriter(debugFile));
-        }catch (IOException e_1){
-            //do somethign
-        }
+        String filename = "BRSLOG.txt";
+        if(debugFile == null)
+        debugFile = new File(Environment.getExternalStorageDirectory(),filename);
+
 
     }
 
 
     public static void debug(String message) {
+        message += '\n';
+        byte data[] = message.getBytes();
         try {
-           debugger.write(message);
+           debugger = new FileOutputStream(debugFile,true);
+           debugger.write(data);
+           debugger.flush();
            debugger.close();
         }catch (IOException e){
             //do nothing

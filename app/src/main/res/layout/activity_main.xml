@@ -10,29 +10,55 @@ android:paddingBottom="@dimen/activity_vertical_margin"
     tools:context=".MainActivity"
     android:background="@drawable/background_main_dark_2"
     android:clickable="true"
-    android:onClick="start">
+    android:onClick="start"
+    android:weightSum="1">
 
     <LinearLayout
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal">
+
+
+
         <Space
             android:layout_width="0dp"
             android:layout_weight="1"
             android:layout_height="20dp"
             tools:ignore="NewApi" />
-            <ImageButton
+
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Graphics Debug"
+            android:onClick="graphicsdebug"
+            android:id="@+id/graphicdebug" />
+        <Space
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:layout_height="20dp"
+            tools:ignore="NewApi" />
+
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Talk Debug"
+            android:id="@+id/talkdebug" />
+
+        <Space
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:layout_height="20dp"
+            tools:ignore="NewApi" />
+
+        <ImageButton
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:id="@+id/settings"
                 android:onClick="settings"
                 android:background="@drawable/button_settings_selector"/>
-        </LinearLayout>
 
 
-
-
-
+    </LinearLayout>
 
 
 

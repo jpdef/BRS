@@ -38,6 +38,11 @@
             android:name="StartDetect"
             android:label="StartDetect"
             android:screenOrientation="portrait" />
+
+        <activity
+            android:name=".GraphicsDebug"
+            android:label="GraphicsDebug"
+            android:screenOrientation="portrait" />
     </application>
 
 </manifest>
