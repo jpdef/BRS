@@ -49,6 +49,7 @@ public class StartDetect extends Activity {
     int proximitySetting;
     int alertSetting;
     int alertFlag = 0;
+    int pauseFlag = 0;
     float prox;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -79,9 +80,11 @@ public class StartDetect extends Activity {
     }
     @Override
     protected void onPause() {
-        super.onStop();
-        //sensor.stopArdiuno();
-
+        super.onPause();
+        pauseFlag =1;
+        //radial.surfaceDestroyed(radial.getHolder());
+        //Intent intent = new Intent(StartDetect.this,MainActivity.class);
+        //startActivity(intent);
     }
 
 
@@ -89,7 +92,15 @@ public class StartDetect extends Activity {
     protected void onStop() {
         super.onStop();
 
+    }
 
+    @Override
+    protected void onResume(){
+        super.onResume();
+        if(pauseFlag == 1) {
+            pauseFlag =0;
+            finish();
+        }
     }
 
     @Override

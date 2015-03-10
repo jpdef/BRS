@@ -172,12 +172,12 @@ public class Sensor {
 
                 try {
                     float[] tmp = {0,0,0,0,0,0};
-                    if (DeviceDetect.isConnected()) {
+                    //if (DeviceDetect.isConnected()) {
                         tmp = sensor.getData();
                         sensor.fifo.add(tmp);
-                    }else{
-                        DeviceDetect.debug("SensorThread:No longer connected ");
-                    }
+                    //}else{
+                        //DeviceDetect.debug("SensorThread:No longer connected ");
+                   // }
 
 
                 }catch (Exception e){
