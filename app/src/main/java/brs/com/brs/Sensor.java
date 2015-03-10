@@ -162,7 +162,9 @@ public class Sensor {
                 }catch (InterruptedException e){
 
                     try {
+                        DeviceDetect.debug("SensorThread:Caught Interupt");
                         port.close();
+                        DeviceDetect.debug("SensorThread:Port closed");
                     } catch (IOException e1) {
                         e1.printStackTrace();
                     }
@@ -173,10 +175,13 @@ public class Sensor {
                     if (DeviceDetect.isConnected()) {
                         tmp = sensor.getData();
                         sensor.fifo.add(tmp);
+                    }else{
+                        DeviceDetect.debug("SensorThread:No longer connected ");
                     }
 
 
                 }catch (Exception e){
+                    DeviceDetect.debug("SensorThread:Couldn't get data");
                     this.setRunning(false);
                 }
 
