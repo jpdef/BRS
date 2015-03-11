@@ -1,0 +1,44 @@
+Sprint 2 Report, Remote Sensing for Bicycle, team BRS, 2/24/15
+
+Actions to stop doing:
+    -nothing for this sprint
+
+Actions to start doing:
+    -The team should confirm meetings ahead of time to ensure attendance, since some meetings were missing some members
+    -The team should utilize GIT more, and frequently update working code as finished,since not having current code hindered some portions of lab
+
+Actions to keep doing:
+    -What is working well is our current scrum meetings. Having the time set, allows for all to plan so they can make it.
+
+Work completed/not completed:
+  Completed--
+      User Story 1 “As a user I want a graphical display that readily shows and warns of dangers around me”
+	      note: data being displayed, missing some tasks
+      User Story 2 “As a developer/user I want only accurate data to be send to android application”
+      	note: some advanced testing has moved to next sprint
+      User Story 4 “As a developer I want the specifications of the sensors in use, including fov and max distance”
+      User Story 3 “As a user want a safe data connection be to sent so the application doesn’t unexpectedly close”
+      User Story 5“ As a user I want an app that lets me select what is displayed to me and when to alert me of incoming objects”
+
+  Not Completed--
+     User Story 1 “As a user I want a graphical display that readily shows and warns of dangers around me”
+	      note: missing function to light the wedge that object in currently in 
+	
+
+Work completion rate:
+
+    -user stories completed before sprint: 3
+    -estimated work hours: 35 (prior to sprint start)
+    -duration of sprint 2: 8(days)
+
+    -total completed user stories: 3.5
+    -completed points: 27 
+
+    -estimated work hours: 35 (prior to sprint start)
+
+    -averages:
+    user stories/ day = 8/3.5 = 2.3 
+    work hours/day = points/day = 22/8 = 2.75
+
+    -Burnup chart found at 
+    github: master/Documentation/burn_up_2

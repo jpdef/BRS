@@ -1,0 +1,41 @@
+Sprint 3 Report Review, Remote Sensing for Bicycle, team BRS, 3/09/15
+
+Actions to stop doing:
+    -nothing for this sprint
+
+Actions to start doing:
+    -The team should confirm meetings ahead of time to ensure attendance, since some meetings were missing some members
+    -The team should utilize GIT more, and frequently update working code as finished,since not having current code hindered some portions of lab
+
+Actions to keep doing:
+    -What is working well is our current scrum meetings. Having the time set, allows for all to plan so they can make it.
+
+Work completed/not completed:
+  Completed--
+      User Story 1 “As a user, I want an alert system that will alert me when there is incoming traffic
+		  near me"
+		  note: it is completed but we have no velocity calculation. Alert system is main part though
+      User Story 2 “As a user I want a packaged device that will stay on the bike firmly without
+		  having to worry about it"
+      User Story 3 “As a tester I want precise data to make sure that the app is working properly”
+
+
+  Not Completed--
+     User Story 3 “As a user I want a graphical display that readily shows and warns of dangers around me”
+	      note: still trying to work on it until Mar 11th. More of a extra feature if anything
+				we have a debug log but not really a user log as of right now
+	
+
+Work completion rate:
+
+    -user stories completed before sprint: 8
+    -duration of sprint 2: 13(days)
+
+    -total completed user stories: 2.5
+    -completed points: 30
+
+    -estimated work hours: 18
+
+    -averages:
+    day / userstories = 13/2.5 = 5.2
+    work hours/day = points/day = 30/13 = 2.3
