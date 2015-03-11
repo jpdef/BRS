@@ -62,10 +62,12 @@ public class StartDetect extends Activity {
             getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
 
         }else{
+            DeviceDetect.debug("StartDetected: Failed Device not Connected");
             Intent intent = new Intent(StartDetect.this,MainActivity.class);
             startActivity(intent);
 
         }
+
         //Preferences for saved data
         @SuppressWarnings("deprecation")
         final SharedPreferences myPrefs = this.getSharedPreferences(
@@ -82,9 +84,6 @@ public class StartDetect extends Activity {
     protected void onPause() {
         super.onPause();
         pauseFlag =1;
-        //radial.surfaceDestroyed(radial.getHolder());
-        //Intent intent = new Intent(StartDetect.this,MainActivity.class);
-        //startActivity(intent);
     }
 
 
@@ -162,9 +161,11 @@ public class StartDetect extends Activity {
             paint.setColor(Color.parseColor("#ffffff"));
             canvas.drawText(Long.toString(radialthread.drop_count),endX/2, endY*(1-2/(float)8),paint);
 
-            canvas.drawLines(makeArc(canvas,2),paint);
-            canvas.drawLines(makeArc(canvas,3), paint);
-            canvas.drawLines(makeArc(canvas,4),paint);
+            float distfeet = sensor.maxDistance/2.5f;
+            for(int i =2;i<5;++i){
+                canvas.drawLines(makeArc(canvas,i),paint);
+                canvas.drawText(Float.toString(distfeet/i),endX/i,endY/i,paint);
+            }
 
             if(alertSetting==1) {
                 int alertFlag = 0;
@@ -201,8 +202,7 @@ public class StartDetect extends Activity {
 
         @Override
         public void surfaceDestroyed(SurfaceHolder holder) {
-            Log.v(gtag, "DESTROY");
-            //sensor.stopArdiuno();
+            DeviceDetect.debug("Surface Destroyed");
             sensor.sensorthread.setRunning(false);
             radialthread.setRunning(false);
             boolean retry = true;
@@ -213,13 +213,8 @@ public class StartDetect extends Activity {
                     retry =false;
 
                 }catch(InterruptedException e){
-
+                     DeviceDetect.debug("start detect: couldn't join thread");
                 }
-            }
-            try {
-                //DeviceDetect.disconnectDevice();
-            }catch (Exception e2){
-                //do something
             }
         }
         /*
@@ -304,6 +299,9 @@ public class StartDetect extends Activity {
 
     }
 
+    /*Draw functions for graphics, generates points*/
+
+
     public float[] makePerimeter(Canvas canvas, float[] radii,int init){
            float thirty= (float)Math.PI/6;
            float init_angle = init*thirty;
@@ -334,7 +332,6 @@ public class StartDetect extends Activity {
             arcArray[i]   = (canvas.getWidth()/rad_div)*
                    (FloatMath.cos(angle)) + canvas.getWidth()/2;
             arcArray[++i] = (canvas.getHeight()/rad_div)* FloatMath.sin(angle);
-            //Log.v(gtag, arcArray[i-1] + " " + arcArray[i]);
         }
 
         return arcArray;
@@ -352,17 +349,13 @@ public class StartDetect extends Activity {
             float endY =  (maxH/2)* FloatMath.sin(angle);
             canvas.drawText(String.format("%d",(int)(180*(angle/Math.PI))),
                     endX, (float)(1.2*endY),paint);
-            //Log.v(gtag, endX + " " + endY);
             angle += thirty;
             canvas.drawLine(maxW/2,0,endX, endY,paint);
         }
 
     }
 
-//takes in radii and canvas, when it detects something within proximity,
-//it will turn the screen red.
-//for now, it SHOULD leave the screen red as long as there is something within
-//the proximity.
+
     public void autoAlert(float[] rad, Canvas can, Paint paint){
         for(int i = 0; i < rad.length; i++){
             if(rad[i] <= prox && rad[i]>0) alertFlag = 1;

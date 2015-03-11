@@ -34,7 +34,6 @@ import java.io.File;
  * Created by jake on 1/17/15.
  */
 public class DeviceDetect{
-    private static final String TAG = "DeviceDetect";
 
     //USB VARS
     private static UsbManager mUsbManager;
@@ -46,6 +45,7 @@ public class DeviceDetect{
     //Debug VARs
     public static File debugFile;
     public static FileOutputStream debugger;
+    public static boolean debugmode = false;
 
 
 
@@ -111,16 +111,19 @@ public class DeviceDetect{
     }
 
 
-    public static void debug(String message) {
-        message += '\n';
-        byte data[] = message.getBytes();
-        try {
-           debugger = new FileOutputStream(debugFile,true);
-           debugger.write(data);
-           debugger.flush();
-           debugger.close();
-        }catch (IOException e){
-            //do nothing
+    public static void debug(String message,Context ctx) {
+
+        if(debugmode) {
+            message += '\n';
+            byte data[] = message.getBytes();
+            try {
+                debugger = new FileOutputStream(debugFile, true);
+                debugger.write(data);
+                debugger.flush();
+                debugger.close();
+            } catch (IOException e) {
+                //do nothing
+            }
         }
 
     }

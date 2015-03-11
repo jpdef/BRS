@@ -1,5 +1,7 @@
 package brs.com.brs;
 
+import android.bluetooth.BluetoothClass;
+
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
@@ -12,25 +14,35 @@ import com.hoho.android.usbserial.util.HexDump;
  * Created by jake on 2/16/15.
  */
 public class Sensor {
+    /*Serial Variables*/
     UsbSerialPort port;
-    sensorThread sensorthread;
     int readtime =100;
     int writetime=100;
+
+    /*Physical Varaiables*/
+    float maxDistance =175;
+
+    /*Errors*/
     IOException no_write;
     IOException no_read ;
+
+    /*Threads*/
+    sensorThread sensorthread;
+
 
     /*Byte signals*/
     public final byte sig_start = (byte) 0xFF;
     public final byte sig_error = (byte) 0xEF;
     public final byte sig_kill  =  (byte) 0xEE;
-    public final byte s1        =  (byte) 0xFE;
 
     /* FIFO */
     List<float[]> fifo;
 
+    /* Constructor*/
     public Sensor(UsbSerialPort port){
+       DeviceDetect.debug("Sensor()::" + "port =" + port );
        this.port =port;
-        fifo = new ArrayList<float[]>();
+        fifo = new ArrayList<>();
         sensorthread = new sensorThread(this);
 
     }
@@ -38,27 +50,30 @@ public class Sensor {
 
     /* getData()
     *
-    * */
+    * read port & decode
+    * Catch read errors
+    */
     public float[] getData() throws Exception{
-        try {
-          // writePort(sig_start);
             try {
                  return decode(readPort());
             }catch (Exception nr){
+                DeviceDetect.debug("getData::"+ "read failed");
                 throw no_read;
             }
-        }catch (Exception nw){
-            throw no_write;
-        }
+
 
     }
+
+    /*
+    * HALT arduino process
+    */
 
     public void stopArdiuno(){
         try{
             writePort(sig_kill);
             port.close();
         }catch (Exception e){
-            // do somethign
+            DeviceDetect.debug("stopArduino:: write failed");
         }
     }
 
@@ -102,11 +117,10 @@ public class Sensor {
             }
             port.purgeHwBuffers(true,false);
         } catch (IOException e6) {
-            //failure_message("Couldn't Read/Write");
             try {
                 port.close();
             } catch (IOException e7) {
-                //ignore
+                DeviceDetect.debug("readPort:: close() failed");
             }
             throw no_read;
 
@@ -127,16 +141,19 @@ public class Sensor {
         int j = 0;
         while( j < 6 && i < buffer_in.length && buffer_in[i] != sig_kill) {
             output[j] = 0xFF & (buffer_in[i]);
-            output[j] /=(float) 175;           //scale
-            output[j+6] = (0xFF & (buffer_in[i]))/(float)(175);
+            output[j] /=maxDistance;           //scale
+            output[j+6] = (0xFF & (buffer_in[i]))/maxDistance;
             i+=2;
             ++j;
         }
-        //Log.v("Sensor output:", output[0] + " : " + output[2] );
         return output;
 
     }
 
+    /*sensorThread
+    * loops reads and decodes
+    * sends information to queue
+    * */
 
     class sensorThread extends Thread {
         volatile boolean run;
@@ -156,7 +173,6 @@ public class Sensor {
         @Override
         public void run(){
             while(run){
-                //catch interupts
                 try{
                     Thread.sleep(100);
                 }catch (InterruptedException e){
@@ -172,14 +188,8 @@ public class Sensor {
 
                 try {
                     float[] tmp = {0,0,0,0,0,0};
-                    //if (DeviceDetect.isConnected()) {
-                        tmp = sensor.getData();
-                        sensor.fifo.add(tmp);
-                    //}else{
-                        //DeviceDetect.debug("SensorThread:No longer connected ");
-                   // }
-
-
+                    tmp = sensor.getData();
+                    sensor.fifo.add(tmp);
                 }catch (Exception e){
                     DeviceDetect.debug("SensorThread:Couldn't get data");
                     this.setRunning(false);
