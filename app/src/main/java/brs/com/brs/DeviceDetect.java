@@ -111,7 +111,7 @@ public class DeviceDetect{
     }
 
 
-    public static void debug(String message,Context ctx) {
+    public static void debug(String message) {
 
         if(debugmode) {
             message += '\n';

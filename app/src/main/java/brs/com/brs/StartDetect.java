@@ -261,7 +261,7 @@ public class StartDetect extends Activity {
                         if(!sensor.fifo.isEmpty()) {
                             float[] tmp = sensor.fifo.remove(0);
                             for(int i =0; i <6 ; ++i) {
-                                if (tmp[i] != 0) radii[i] = tmp[i];
+                                /*if (tmp[i] != 0)*/ radii[i] = tmp[i];
                                 radii[i+6] = tmp[i+6];
                                 //radii[7] = sensor.fifo.size();
                             }
