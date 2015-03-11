@@ -6,15 +6,7 @@ import android.hardware.usb.UsbAccessory;
 import android.hardware.usb.UsbDeviceConnection;
 import android.hardware.usb.UsbManager;
 import android.os.Environment;
-import android.os.SystemClock;
-import android.support.annotation.NonNull;
-import android.support.v7.app.ActionBarActivity;
-import android.os.Bundle;
-import android.text.method.ScrollingMovementMethod;
-import android.util.Log;
-import android.os.Handler;
-import android.os.Message;
-import android.widget.TextView;
+
 
 import java.io.ByteArrayInputStream;
 import java.io.FileOutputStream;
