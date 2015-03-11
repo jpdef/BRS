@@ -15,6 +15,7 @@ import android.content.Intent;
 
 import android.hardware.usb.UsbDeviceConnection;
 import android.hardware.usb.UsbManager;
+import android.widget.Button;
 import android.widget.TextView;
 
 import android.widget.LinearLayout;
@@ -29,6 +30,7 @@ public class MainActivity extends Activity {
     int proximitySetting;
     int alertSetting;
     int themeSetting;
+    int debugSetting;
 
 
     @Override
@@ -47,6 +49,8 @@ public class MainActivity extends Activity {
             createToast("Not Connected");
         }
 
+        Button graphicsDebug = (Button) findViewById(R.id.graphicdebug);
+        Button talkDebug = (Button) findViewById(R.id.talkdebug);
 
         LinearLayout layout1 = (LinearLayout) findViewById(R.id.main_layout);
         //Preferences for saved data
@@ -63,6 +67,18 @@ public class MainActivity extends Activity {
 
 
         themeSetting = myPrefs.getInt("theme", 0);
+
+        debugSetting = myPrefs.getInt("debug",0);
+
+        //check if debug is on
+        if(debugSetting==1){
+           graphicsDebug.setVisibility(View.VISIBLE);
+           talkDebug.setVisibility(View.VISIBLE);
+        }
+        else{
+            graphicsDebug.setVisibility(View.INVISIBLE);
+            talkDebug.setVisibility(View.INVISIBLE);
+        }
 
         //set current theme
         if(themeSetting==1){
@@ -104,6 +120,20 @@ public class MainActivity extends Activity {
         else{
             layout1.setBackgroundResource(R.drawable.background_main_dark_2);
         }
+
+        debugSetting = myPrefs.getInt("debug",0);
+        Button graphicsDebug = (Button) findViewById(R.id.graphicdebug);
+        Button talkDebug = (Button) findViewById(R.id.talkdebug);
+        //check if debug is on
+        if(debugSetting==1){
+            graphicsDebug.setVisibility(View.VISIBLE);
+            talkDebug.setVisibility(View.VISIBLE);
+        }
+        else{
+            graphicsDebug.setVisibility(View.INVISIBLE);
+            talkDebug.setVisibility(View.INVISIBLE);
+        }
+
     }
 
 

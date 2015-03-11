@@ -20,6 +20,7 @@ public class Settings extends Activity {
     int proximitySetting;
     int alertSetting;
     int themeSetting;
+    int debugSetting;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -34,6 +35,8 @@ public class Settings extends Activity {
         alertSetting = myPrefs.getInt("alert", 1);
 
         themeSetting = myPrefs.getInt("theme", 0);
+
+        debugSetting = myPrefs.getInt("debug",0);
 
         //set current theme
         LinearLayout layout2 = (LinearLayout) findViewById(R.id.settings_layout);
@@ -80,6 +83,14 @@ public class Settings extends Activity {
         }
         else{
             theme_button.setChecked(false);
+        }
+
+        ToggleButton debug_button = (ToggleButton) findViewById(R.id.button_debug);
+        if(debugSetting==1){
+            debug_button.setChecked(true);
+        }
+        else{
+            debug_button.setChecked(false);
         }
     }
 
@@ -133,6 +144,28 @@ public class Settings extends Activity {
         }
     }
 
+    public void showDebug(View view){
+        //Preferences for saved data
+        @SuppressWarnings("deprecation")
+        final SharedPreferences myPrefs = this.getSharedPreferences(
+                "myPrefs", MODE_WORLD_READABLE);
+        final SharedPreferences.Editor editor= myPrefs.edit();
+        boolean on = ((ToggleButton) view).isChecked();
+        //switched on
+        if(on){
+            //auto alert turns on
+            editor.putInt("debug",1);
+            editor.apply();
+            debugSetting=1;
+        }
+        //off
+        else{
+            //auto alert turns off
+            editor.putInt("debug",0);
+            editor.apply();
+            debugSetting=0;
+        }
+    }
     @Override
     public void onBackPressed() {
            finish();

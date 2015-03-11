@@ -56,6 +56,13 @@
                 android:textOff="Dark Theme"
                 android:onClick="themeChange"
                 android:textSize="25sp"/>
-
+            <ToggleButton
+                android:id="@+id/button_debug"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textOn="Debug On"
+                android:textOff="Debug Off"
+                android:onClick="showDebug"
+                android:textSize="25sp"/>
         </LinearLayout>
 </LinearLayout>
