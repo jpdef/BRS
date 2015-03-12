@@ -46,6 +46,7 @@ public class DeviceDetect{
     static public void intializeSerial(Context context)
     {
          mUsbManager = (UsbManager) context.getSystemService(Context.USB_SERVICE);
+         if(MainActivity.debugSetting > 0) debugmode =true;
     }
 
     public static boolean isConnected(){

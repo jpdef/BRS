@@ -30,7 +30,7 @@ public class MainActivity extends Activity {
     int proximitySetting;
     int alertSetting;
     int themeSetting;
-    int debugSetting;
+     public static int debugSetting;
 
 
     @Override
@@ -142,6 +142,11 @@ public class MainActivity extends Activity {
        Intent intent = new Intent(this, GraphicsDebug.class);
        startActivity(intent);
    }
+
+    public void talkdebug(View view){
+        Intent intent = new Intent(this, TalkDebug.class);
+        startActivity(intent);
+    }
 
 
     public void settings(View view){

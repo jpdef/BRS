@@ -43,6 +43,11 @@
             android:name=".GraphicsDebug"
             android:label="GraphicsDebug"
             android:screenOrientation="portrait" />
+
+        <activity
+            android:name=".TalkDebug"
+            android:label="TalkDebug"
+            android:screenOrientation="portrait" />
     </application>
 
 </manifest>
