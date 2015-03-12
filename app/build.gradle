@@ -24,4 +24,6 @@ dependencies {
     compile 'com.android.support:appcompat-v7:21.0.3'
     //compile 'usbSerialForAndroid/src/java/com.android.hoho.usbserial:usbSerialForAndoid'
     compile project(':usbSerialForAndroid')
+    testCompile 'junit:junit:4.12'
+    testCompile "org.mockito:mockito-core:1.9.5"
 }

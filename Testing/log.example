@@ -1,0 +1,152 @@
+BRS Session Started:
+35
+MainActivity onCreate()
+Sensor()::port =<CdcAcmSerialPort device_name=/dev/busk /usb/002/002 device_id=2002 port_number=0>
+getData::read failed
+SensorThread:Couldn't get data
+Surface Destroyed
+Sensor()::port =<CdcAcmSerialPort device_name=/dev/bus/usb/002/002 device_id=2002 port_number=0>
+Surface Destroyed
+getData::read failed
+SensorThread:Couldn't get data
+Settings: onCreate
+Sensor()::port =<CdcAcmSerialPort device_name=/dev/bus/usb/002/002 device_id=2002 port_number=0>
+Surface Destroyed
+getData::read failed
+SensorThread:Couldn't get data
+Sensor()::port =<CdcAcmSerialPort device_name=/dev/bus/usb/002/002 device_id=2002 port_number=0>
+TalkDebug: No write
+'Failed to read
+Sensor()::port =<CdcAcmSerialPort device_name=/dev/bus/usb/002/002 device_id=2002 port_number=0>
+getData::read failed
+SensorThread:Couldn't get data
+Surface Destroyed
+BRS Session Started:
+42
+MainActivity onCreate()
+Sensor()::port =<CdcAcmSerialPort device_name=/dev/bus/usb/002/003 device_id=2003 port_number=0>
+getData::read failed
+SensorThread:Couldn't get data
+Surface Destroyed
+Settings: onCreate
+BRS Session Started:
+3
+MainActivity onCreate()
+Settings: onCreate
+Sensor()::port =<CdcAcmSerialPort device_name=/dev/bus/usb/002/002 device_id=2002 port_number=0>
+Recieved at11/2/2015::20:25:16
+00000000000000000000000000000000
+
+Recieved at11/2/2015::20:25:16
+00000000000000000000000000000000
+
+Recieved at11/2/2015::20:25:17
+00000000000000000000000000000000
+
+Recieved at11/2/2015::20:25:17
+00000000000000000000000000000000
+
+Recieved at11/2/2015::20:25:17
+00000000000000000000000000000000
+
+Recieved at11/2/2015::20:25:17
+00FF1900140030002C0036002800EE00
+
+Recieved at11/2/2015::20:25:17
+00000000000000000000000000000000
+
+Recieved at11/2/2015::20:25:18
+00FF1900140000000000000000000000
+
+Recieved at11/2/2015::20:25:18
+002B002E002800EE0000000000000000
+
+Recieved at11/2/2015::20:25:18
+1900050032002F003E002800EE000000
+
+Recieved at11/2/2015::20:25:18
+1900140031002F003D002800EE000000
+
+Recieved at11/2/2015::20:25:18
+1900140030002F002F002800EE000000
+
+Recieved at11/2/2015::20:25:19
+190014007A0004002E002800EE000000
+
+Recieved at11/2/2015::20:25:19
+190005000400030031002800EE000000
+
+Recieved at11/2/2015::20:25:19
+19001400030002002E002800EE000000
+
+Recieved at11/2/2015::20:25:19
+1900040001002F002E002800EE000000
+
+Recieved at11/2/2015::20:25:20
+00000000000000000000000000000000
+
+Recieved at11/2/2015::20:25:20
+1900050031002B0003000300EE000000
+
+Recieved at11/2/2015::20:25:20
+00FF1900050030002F003D000000EE00
+
+Recieved at11/2/2015::20:25:20
+00FF190014007A002B003D000100EE00
+
+Recieved at11/2/2015::20:25:20
+FF1900140030002F0003000000000000
+
+Recieved at11/2/2015::20:25:21
+00EE0000000000000000000000000000
+
+Recieved at11/2/2015::20:25:21
+1900050030002F002F002800EE000000
+
+Recieved at11/2/2015::20:25:21
+19001400300007002E002800EE000000
+
+Recieved at11/2/2015::20:25:21
+1900140030002F003C002800EE000000
+
+Recieved at11/2/2015::20:25:22
+00000000000000000000000000000000
+
+Recieved at11/2/2015::20:25:22
+0200140032002B0036002800EE000000
+
+Recieved at11/2/2015::20:25:22
+00FF1900030003002F003D002800EE00
+
+Recieved at11/2/2015::20:25:22
+00FF1900050032002C0004002800EE00
+
+Recieved at11/2/2015::20:25:22
+00FF1900140032002C003E000400EE00
+
+Recieved at11/2/2015::20:25:23
+FF1900140031002C003D002900EE0000
+
+Recieved at11/2/2015::20:25:23
+FF1900050032002F0036002800EE0000
+
+Recieved at11/2/2015::20:25:23
+FF1900140030002F002E002800EE0000
+
+Recieved at11/2/2015::20:25:23
+FF1900140032002F0036002800EE0000
+
+Recieved at11/2/2015::20:25:24
+FF190014007A002B003D002800EE0000
+
+Recieved at11/2/2015::20:25:24
+FF1900050031002F003E002800EE0000
+
+Recieved at11/2/2015::20:25:24
+190005007A002F002E002800EE000000
+
+'Failed to read
+Sensor()::port =<CdcAcmSerialPort device_name=/dev/bus/usb/002/002 device_id=2002 port_number=0>
+getData::read failed
+SensorThread:Couldn't get data
+Surface Destroyed

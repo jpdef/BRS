@@ -2,21 +2,28 @@ package brs.com.brs;
 
 import junit.framework.TestCase;
 
-import java.io.IOException;
 
 public class SensorTest extends TestCase {
     int numBytesRead;
     byte[] buffer_in;
     byte sig_start = (byte)0xFF;
     byte sig_kill =  (byte)0xEE;
-    float maxDistance =176;
+    float maxDistance =255;
 
     protected void setUp(){
-        numBytesRead = 0;
+        // Check crazy inputs
         buffer_in = new byte[12];
-        for (int i = 0; i<12;++i){
-            buffer_in[i] = (byte)0xFF;
-        }
+        buffer_in[0] = (byte)0xFF;
+        buffer_in[1] = (byte) 10;
+        buffer_in[2] = (byte) -1;
+        buffer_in[3] = (byte) 512 ;
+        buffer_in[4] = (byte) 0;
+        buffer_in[5] = (byte)0xFF;
+        buffer_in[6] = (byte)0xEE;
+        buffer_in[7] = (byte)0xFF;
+
+
+
     }
 
 
@@ -37,11 +44,16 @@ public class SensorTest extends TestCase {
                 i+=2;
                 ++j;
             }
-            assertNotNull(output);
-        for(int p = 0;p<12;++p){
-            assertEquals(1,output[p]);
-        }
+        assertNotNull(output);
+        assertTrue(output[0] > 0.0);
+        assertTrue(output[1] >= 0.0);
+        assertTrue(output[2] >= 0.0);
+        assertEquals(1.0 , output[3], .0001);
+        assertEquals(0.0 , output[4], .0001);
+        assertEquals(0.0 , output[5], .0001);
+        assertEquals(output[0],output[6]);
 
-        }
+
+    }
 
     }
