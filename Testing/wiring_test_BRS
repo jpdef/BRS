@@ -1,0 +1,46 @@
+//To test the wave an object in front of all six sensors, open serial monitor to check for warning messages
+//sample outputs
+//output with correct of correct setup
+sensor 1 connected
+sensor 2 connected
+sensor 3 connected
+sensor 4 connected
+sensor 5 connected
+sensor 6 connected
+
+sensor 1 connected
+sensor 2 connected
+sensor 3 connected
+sensor 4 connected
+sensor 5 connected
+sensor 6 connected
+
+sensor 1 connected
+sensor 2 connected
+sensor 3 connected
+sensor 4 connected
+sensor 5 connected
+sensor 6 connected
+
+//output when wires incorrectly setup
+sensor 1 might be the issue
+sensor 2 connected
+sensor 3 connected
+sensor 4 connected
+sensor 5 connected
+sensor 6 might be the issue
+
+sensor 1 might be the issue
+sensor 2 connected
+sensor 3 connected
+sensor 4 connected
+sensor 5 connected
+sensor 6 might be the issue
+
+sensor 1 might be the issue
+sensor 2 connected
+sensor 3 connected
+sensor 4 connected
+sensor 5 connected
+sensor 6 might be the issue
+
